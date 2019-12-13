@@ -26,8 +26,6 @@ spec:
           protocol: TCP
           containerPort: 8080
         env:
-        - name: DT_CUSTOM_PROP
-          value: "keptn_project={{ .Values.keptn.project }} keptn_service={{ .Values.keptn.service }} keptn_stage={{ .Values.keptn.stage }} keptn_deployment={{ .Values.keptn.deployment }}"
         - name: POD_NAME
           valueFrom:
             fieldRef:
@@ -65,5 +63,5 @@ spec:
               cpu: 1000m
               memory: 2048Mi
           requests:
-              cpu: 500m
+              cpu: 50m
               memory: 1024Mi

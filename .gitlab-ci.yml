@@ -1,0 +1,99 @@
+#
+# Dynatrace Demo CI/CD Pipeline
+#
+
+#################################################################
+# Global Variables
+#################################################################
+variables:
+  APPLICATION_NAME: sample-app
+  APPLICATION_SHORT_NAME: sampleapp
+
+include: 
+  - local: 'ci-includes/dt_create_deployment_event.yaml'
+  - local: 'ci-includes/dt_create_synthetic_check.yaml'
+  - local: 'ci-includes/dt_get_problems.yaml'
+  - local: 'ci-includes/dt_get_performance.yaml'
+  - local: 'ci-includes/keptn_evaluation.yaml'
+
+stages:
+  - build
+  - deploy
+  - verify
+  - chatops
+#  - rollout
+
+#################################################################
+# Build Stage
+#################################################################
+docker-build-master:
+  # Official docker image.
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - tags
+
+deploy-application:
+  image: registry.gitlab.com/checkelmann/cicd-tools:latest
+  stage: deploy
+  environment:
+    name: test
+  variables:
+    GIT_STRATEGY: fetch
+  script: |
+    helm upgrade --install --namespace=${CI_ENVIRONMENT_SLUG} ${APPLICATION_SHORT_NAME} ./chart/
+  only:
+    - tags  
+
+dt_create_deployment_event:
+  environment:
+    name: test
+  only:
+    - tags
+
+dt_create_synthetic_check:
+  variables:
+    TYPE: PRIVATE
+    LOCATIONS: 1
+  environment:
+    name: test
+  only:
+    - tags  
+
+keptn_evaluation:
+  environment:
+    name: test
+  when: manual  
+  start_in: 10 minutes  
+  when: delayed    
+
+dt_get_problems:
+  environment:
+    name: test
+  when: manual
+
+dt_performance:
+  only:
+    - tags
+  #needs: ["dt_create_deployment_event"]
+
+deploy-to-prod:
+  stage: chatops
+  only: [chat, tags]
+  when: manual
+  script:
+    - echo "ChatOps Stage - Deploy to Prod"
+
+#rollout-to-prod:
+#  stage: rollout
+#  only: [tags]
+#  needs: ["deploy-to-prod"]
+#  script:
+#    - echo "Rolling out to Production"
