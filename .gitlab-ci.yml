@@ -20,17 +20,32 @@ stages:
 #################################################################
 # Deploy Stage
 #################################################################
-
-deploy-in-test:
+deploy-cartsdb-in-test:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-test
   environment:
     name: carts-test
   variables:
     GIT_STRATEGY: fetch
-  # script: |
-  #   helm upgrade --install --namespace=${CI_ENVIRONMENT_SLUG} ${APPLICATION_SHORT_NAME} ./charts/carts/
-  #   helm upgrade dev-carts --namespace dev --install --wait --force ./carts/
+  script:
+    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - export KUBECONFIG=${kubeconf_file}
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - export KUBECONFIG=$KUBECONFIG
+    - helm upgrade
+      carts-${CI_ENVIRONMENT_SLUG}
+      --namespace=${CI_ENVIRONMENT_SLUG}
+      --install
+      --wait
+      ./charts/carts-db/ 
+
+deploy-carts-in-test:
+  image: docker.io/devth/helm:v2.12.3
+  stage: deploy-test
+  environment:
+    name: carts-test
+  variables:
+    GIT_STRATEGY: fetch
   script:
     - echo ${kube_config} | base64 -d > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
@@ -44,7 +59,26 @@ deploy-in-test:
       --force
       ./charts/carts/  
 
-deploy-in-staging:
+deploy-cartsdb-in-hardening:
+  image: docker.io/devth/helm:v2.12.3
+  stage: deploy-hardening
+  environment:
+    name: carts-hardening
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - export KUBECONFIG=${kubeconf_file}
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - export KUBECONFIG=$KUBECONFIG
+    - helm upgrade
+      carts-${CI_ENVIRONMENT_SLUG}
+      --namespace=${CI_ENVIRONMENT_SLUG}
+      --install
+      --wait
+      ./charts/carts-db/
+
+deploy-carts-in-staging:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
   environment:
@@ -62,9 +96,28 @@ deploy-in-staging:
       --install
       --wait
       --force
-      ./charts/carts/  
+      ./charts/carts/
 
-deploy-in-production:
+deploy-cartsdb-in-production:
+  image: docker.io/devth/helm:v2.12.3
+  stage: deploy-production
+  environment:
+    name: carts-production
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - export KUBECONFIG=${kubeconf_file}
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - export KUBECONFIG=$KUBECONFIG
+    - helm upgrade
+      carts-${CI_ENVIRONMENT_SLUG}
+      --namespace=${CI_ENVIRONMENT_SLUG}
+      --install
+      --wait
+      ./charts/carts-db/
+
+deploy-carts-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
   environment:
