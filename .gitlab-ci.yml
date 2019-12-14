@@ -36,7 +36,6 @@ deploy-in-test:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
-    - init_helm
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -57,7 +56,6 @@ deploy-in-staging:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
-    - init_helm
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -78,7 +76,6 @@ deploy-in-production:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
-    - init_helm
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
