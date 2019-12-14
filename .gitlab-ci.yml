@@ -22,7 +22,7 @@ stages:
 #################################################################
 
 deploy-in-test:
-  image: registry.gitlab.com/checkelmann/cicd-tools:latest
+  image: docker.io/devth/helm:v2.12.3
   stage: deploy-test
   environment:
     name: carts-test
@@ -45,7 +45,7 @@ deploy-in-test:
       ./charts/carts/  
 
 deploy-in-staging:
-  image: registry.gitlab.com/checkelmann/cicd-tools:latest
+  image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
   environment:
     name: carts-hardening
@@ -65,7 +65,7 @@ deploy-in-staging:
       ./charts/carts/  
 
 deploy-in-production:
-  image: registry.gitlab.com/checkelmann/cicd-tools:latest
+  image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
   environment:
     name: carts-production
