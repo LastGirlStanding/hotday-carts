@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   creationTimestamp: null
-  name: dev-gateway
+  name: "{{ .Release.Namespace }}-gateway"
 spec:
   selector:
     istio: ingressgateway

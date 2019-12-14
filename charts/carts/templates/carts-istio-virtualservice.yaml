@@ -5,12 +5,12 @@ metadata:
   name: carts
 spec:
   gateways:
-  - dev-gateway.dev
+  - "{{ .Release.Namespace }}-gateway.{{ .Release.Namespace }}"
   - mesh
   hosts:
-  - carts.dev.104.197.144.155.xip.io
+  - "carts.{{ .Release.Namespace }}.104.197.144.155.xip.io"
   - carts
   http:
   - route:
     - destination:
-        host: carts.dev.svc.cluster.local
+        host: "carts.{{ .Release.Namespace }}.svc.cluster.local"

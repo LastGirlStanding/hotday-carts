@@ -33,7 +33,7 @@ deploy-cartsdb-in-test:
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
-      carts-${CI_ENVIRONMENT_SLUG}
+      carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
       --install
       --wait
@@ -72,7 +72,7 @@ deploy-cartsdb-in-hardening:
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
-      carts-${CI_ENVIRONMENT_SLUG}
+      carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
       --install
       --wait
@@ -111,7 +111,7 @@ deploy-cartsdb-in-production:
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
-      carts-${CI_ENVIRONMENT_SLUG}
+      carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
       --install
       --wait
