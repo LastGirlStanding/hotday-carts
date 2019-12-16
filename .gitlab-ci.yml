@@ -99,7 +99,7 @@ deploy-carts-in-staging:
       ./charts/carts/
 
 generate-load-in-hardening:
-  image: docker.iomvilliger/jmeter-k8s-runner:latest
+  image: docker.io/mvilliger/jmeter-k8s-runner:latest
   stage: deploy-hardening
   environment:
     name: carts-hardening
