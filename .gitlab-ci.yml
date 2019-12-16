@@ -98,6 +98,28 @@ deploy-carts-in-staging:
       --force
       ./charts/carts/
 
+generate-load-in-hardening:
+  image: docker.iomvilliger/jmeter-k8s-runner:latest
+  stage: deploy-hardening
+  environment:
+    name: carts-hardening
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - export KUBECONFIG=${kubeconf_file}
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - export KUBECONFIG=$KUBECONFIG
+    - export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
+    - jmeter -n -t ./jmeter/load.jmx
+      -l ${CI_ENVIRONMENT_SLUG}_perf.tlf
+      -JSERVER_URL="carts.${CI_ENVIRONMENT_SLUG}.${DOMAIN}"
+      _JSERVER_PORT=80
+      -JVUCount=1
+      -JLoopCount=5
+      -JThinkTime=250
+      -JDT_LTN="PerfCheck_${CI_COMMIT_SHA}"
+
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
