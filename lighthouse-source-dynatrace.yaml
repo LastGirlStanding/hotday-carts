@@ -3,5 +3,5 @@ data:
   sli-provider: dynatrace
 kind: ConfigMap
 metadata:
-  name: lighthouse-config-sockshop
+  name: lighthouse-config-gitlab
   namespace: keptn
