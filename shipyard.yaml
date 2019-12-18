@@ -1,2 +1,2 @@
 stages:
-  - name: "hardening"
+  - name: "carts-hardening"

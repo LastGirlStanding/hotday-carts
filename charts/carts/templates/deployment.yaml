@@ -26,6 +26,8 @@ spec:
           protocol: TCP
           containerPort: 8080
         env:
+        - name: DT_CUSTOM_PROP
+          value: "carts-{{ .Release.Namespace }}"
         - name: POD_NAME
           valueFrom:
             fieldRef:
