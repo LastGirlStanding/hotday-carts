@@ -13,6 +13,7 @@ variables:
 stages:
   - deploy-test
   - deploy-hardening
+  - load-hardening
   - deploy-production
   #- verify  
 
@@ -100,7 +101,7 @@ deploy-carts-in-staging:
 
 generate-load-in-hardening:
   image: docker.io/mvilliger/jmeter-k8s-runner:latest
-  stage: deploy-hardening
+  stage: load-hardening
   environment:
     name: carts-hardening
   variables:
