@@ -25,7 +25,7 @@ deploy-cartsdb-in-test:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-test
   environment:
-    name: test
+    name: cartstest
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -44,7 +44,7 @@ deploy-carts-in-test:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-test
   environment:
-    name: test
+    name: carts-test
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -64,7 +64,7 @@ deploy-cartsdb-in-hardening:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
   environment:
-    name: hardening
+    name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -83,7 +83,7 @@ deploy-carts-in-staging:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
   environment:
-    name: hardening
+    name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -103,7 +103,7 @@ generate-load-in-hardening:
   image: docker.io/mvilliger/jmeter-k8s-runner:latest
   stage: load-hardening
   environment:
-    name: hardening
+    name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -125,7 +125,7 @@ deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
   environment:
-    name: production
+    name: carts-production
   variables:
     GIT_STRATEGY: fetch
   script:
@@ -144,7 +144,7 @@ deploy-carts-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
   environment:
-    name: production
+    name: carts-production
   variables:
     GIT_STRATEGY: fetch
   script:
