@@ -115,8 +115,8 @@ generate-load-in-hardening:
       -l ${CI_ENVIRONMENT_SLUG}_perf.tlf
       -JSERVER_URL="carts.${CI_ENVIRONMENT_SLUG}.${DOMAIN}"
       -JSERVER_PORT=80
-      -JVUCount=1
-      -JLoopCount=5
+      -JVUCount=10
+      -JLoopCount=500
       -JThinkTime=250
       -JDT_LTN="PerfCheck_${CI_COMMIT_SHA}"
 
