@@ -102,7 +102,7 @@ dt_test_deployment_event:
     }
     "
     echo $DT_PAYLOAD > payload.tmp
-    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_ID}.live.dynatrace.com/api/v1/events" -d @payload.tmp
+    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
       
 deploy-cartsdb-in-hardening:
   image: docker.io/devth/helm:v2.12.3
@@ -184,7 +184,7 @@ dt_stage_deployment_event:
       }
       "
       echo $DT_PAYLOAD > payload.tmp
-      curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_ID}.live.dynatrace.com/api/v1/events" -d @payload.tmp
+      curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
   
             
 generate-load-in-hardening:
@@ -332,5 +332,5 @@ dt_production_deployment_event:
     }
     "
     echo $DT_PAYLOAD > payload.tmp
-    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_ID}.live.dynatrace.com/api/v1/events" -d @payload.tmp
+    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
       
