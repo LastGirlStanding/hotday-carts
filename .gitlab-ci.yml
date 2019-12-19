@@ -162,6 +162,8 @@ keptn-evaluation:
     else
             echo "Keptn Quality Gate - Evaluation Succeeded"
     fi
+  when: delayed
+  start_in: 60 seconds
 
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
