@@ -12,7 +12,7 @@ cat tk
 fin="0"
 until [ "$fin" = "1" ]
 do
-    status=$(curl -s -k -X GET "${KEPTN_ENDPOINT}/v1/event?keptnContext=${ctxid}&type=sh.keptn.events.evaluation-done" -H "accept: application/json" -H "x-token: ${KEPTN_API_TOKEN}"|jq .data.evaluationdetails.indicatorResults[0].status)
+    status=$(curl -s -k -X GET "${KEPTN_ENDPOINT}/v1/event?keptnContext=${ctxid}&type=sh.keptn.events.evaluation-done" -H "accept: application/json" -H "x-token: ${KEPTN_API_TOKEN}"|jq .data.evaluationdetails.result)
     if [ "$status" = "null" ]; then
         echo "Status null will wait..."
         sleep 5
@@ -20,6 +20,7 @@ do
         fin="1"
     fi
 done
+echo "eval status = ${status}"
 if [ "$status" = "\"fail\"" ]; then
         echo "Keptn Quality Gate - Evaluation failed!"
         echo "For details visit the Bridge!"
