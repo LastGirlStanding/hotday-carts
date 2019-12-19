@@ -72,7 +72,7 @@ dt_test_deployment_event:
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-    echo $VERSION
+    echo ${CI_COMMIT_SHORT_SHA}
     export DT_PAYLOAD="
     {
       \"eventType\": \"CUSTOM_DEPLOYMENT\",
@@ -89,7 +89,7 @@ dt_test_deployment_event:
         }
       },
       \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-      \"deploymentVersion\":\"${VERSION}\",
+      \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
       \"deploymentProject\":\"${CI_PROJECT_ID}\",
       \"ciBackLink\":\"${CI_PIPELINE_URL}\",
       \"source\":\"GitLab\",
@@ -154,7 +154,7 @@ dt_stage_deployment_event:
       DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
       DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-      echo $VERSION
+      echo ${CI_COMMIT_SHORT_SHA}
       export DT_PAYLOAD="
       {
         \"eventType\": \"CUSTOM_DEPLOYMENT\",
@@ -171,7 +171,7 @@ dt_stage_deployment_event:
           }
         },
         \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-        \"deploymentVersion\":\"${VERSION}\",
+        \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
         \"deploymentProject\":\"${CI_PROJECT_ID}\",
         \"ciBackLink\":\"${CI_PIPELINE_URL}\",
         \"source\":\"GitLab\",
@@ -302,7 +302,7 @@ dt_production_deployment_event:
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-    echo $VERSION
+    echo ${CI_COMMIT_SHORT_SHA}
     export DT_PAYLOAD="
     {
       \"eventType\": \"CUSTOM_DEPLOYMENT\",
@@ -319,7 +319,7 @@ dt_production_deployment_event:
         }
       },
       \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-      \"deploymentVersion\":\"${VERSION}\",
+      \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
       \"deploymentProject\":\"${CI_PROJECT_ID}\",
       \"ciBackLink\":\"${CI_PIPELINE_URL}\",
       \"source\":\"GitLab\",
