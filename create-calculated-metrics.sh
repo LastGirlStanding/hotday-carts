@@ -70,7 +70,7 @@ function createCalculatedMetric() {
     echo "PUT https://${DT_TENANT_URL}/api/config/v1/calculatedMetrics/service/$METRICKEY"
     echo "$PAYLOAD"
 
-    curl -X PUT \
+    curl -s -X PUT \
         "https://${DT_TENANT_URL}/api/config/v1/calculatedMetrics/service/$METRICKEY" \
         -H 'accept: application/json; charset=utf-8' \
         -H "Authorization: Api-Token $DT_API_TOKEN" \
@@ -86,7 +86,7 @@ function createCalculatedMetric() {
 ## Base Metric: Response Time (RESPONSE_TIME)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.topurlresponsetime" "Top URL Response Time" "RESPONSE_TIME" "MICRO_SECOND" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "URL" "{URL:Path}" "SUM"
+createCalculatedMetric "calc:service.toptestresponsetime" "Top URL Response Time" "RESPONSE_TIME" "MICRO_SECOND" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SUM"
 
 
 ## Creates a Calculated Service Metrics "Top URL Service Calls"
@@ -94,66 +94,11 @@ createCalculatedMetric "calc:service.topurlresponsetime" "Top URL Response Time"
 ## Base Metric: Number of calls to other services (NON_DATABASE_CHILD_CALL_COUNT)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.topurlservicecalls" "Top URL Service Calls" "NON_DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "URL" "{URL:Path}" "SINGLE_VALUE"
+createCalculatedMetric "calc:service.toptestservicecalls" "Top URL Service Calls" "NON_DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
 
 ## Creates a Calculated Service Metrics "Top URL Service Calls"
 ## Metrics Id: calc:service.topurlservicecalls
 ## Base Metric: Number of calls to other services (NON_DATABASE_CHILD_CALL_COUNT)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.topurldbcalls" "Top URL DB Calls" "DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "URL" "{URL:Path}" "SINGLE_VALUE"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# curl -X PUT \
-#         "https://${DT_TENANT_URL}/api/config/v1/customMetric/service/calc%3Aservice.topurlresponsetime" \
-#         -H 'accept: application/json; charset=utf-8' \
-#         -H "Authorization: Api-Token $DT_API_TOKEN" \
-#         -H 'Content-Type: application/json; charset=utf-8' \
-#         -d '{
-#             "tsmMetricKey": "calc:service.topurlresponsetime",
-#             "name": "Top URL Response Time",
-#             "enabled": true,
-#             "metricDefinition": {
-#                 "metric": "RESPONSE_TIME",
-#                 "requestAttribute": null
-#             },
-#             "unit": "MICRO_SECOND",
-#             "unitDisplayName": "",
-#             "conditions": [
-#                 {
-#                 "attribute": "SERVICE_TAG",
-#                 "comparisonInfo": {
-#                     "type": "TAG",
-#                     "comparison": "EQUALS",
-#                     "value": {
-#                         "context": "'$TAG_CONTEXT'",
-#                         "key": "'$TAG_KEY'",
-#                         "value": "'$TAG_VALUE'"
-#                     },
-#                     "negate": false
-#                 }
-#                 }
-#             ],
-#             "dimensionDefinition": {
-#                 "name": "URL",
-#                 "dimension": "{URL}",
-#                 "placeholders": [],
-#                 "topX": 10,
-#                 "topXDirection": "DESCENDING",
-#                 "topXAggregation": "SUM"
-#             }
-#         }' \
-#         -o curloutput.txt
+createCalculatedMetric "calc:service.toptestdbcalls" "Top URL DB Calls" "DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
