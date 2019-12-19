@@ -14,6 +14,7 @@ stages:
   - deploy-test
   - deploy-hardening
   - load-hardening
+  - keptn-sli-update
   - keptn-eval-hardening
   - deploy-production
   #- verify  
@@ -211,13 +212,13 @@ generate-load-in-hardening:
 
 keptn-SLI-update:
   image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
-  stage: keptn-eval-hardening
+  stage: keptn-sli-update
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script: |
-    sed -i 's/REPLACEME/${CI_COMMIT_SHA}/g' sli-quality-gates-dynatrace-extended.yaml
+    sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
     cat sli-quality-gates-dynatrace-extended.yaml
     kubectl apply -f sli-quality-gates-dynatrace-extended.yaml
 
