@@ -86,7 +86,7 @@ function createCalculatedMetric() {
 ## Base Metric: Response Time (RESPONSE_TIME)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.toptestresponsetime" "Top URL Response Time" "RESPONSE_TIME" "MICRO_SECOND" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SUM"
+createCalculatedMetric "calc:service.toptestresponsetime" "Top Load Test Response Time" "RESPONSE_TIME" "MICRO_SECOND" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SUM"
 
 
 ## Creates a Calculated Service Metrics "Top URL Service Calls"
@@ -94,11 +94,11 @@ createCalculatedMetric "calc:service.toptestresponsetime" "Top URL Response Time
 ## Base Metric: Number of calls to other services (NON_DATABASE_CHILD_CALL_COUNT)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.toptestservicecalls" "Top URL Service Calls" "NON_DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
+createCalculatedMetric "calc:service.toptestservicecalls" "Top Load Test Service Calls" "NON_DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
 
 ## Creates a Calculated Service Metrics "Top URL Service Calls"
 ## Metrics Id: calc:service.topurlservicecalls
 ## Base Metric: Number of calls to other services (NON_DATABASE_CHILD_CALL_COUNT)
 ## Dimension: URL
 ## Condition: service tag [$TAG_CONTEXT]$TAG_KEY:TAG_VALUE
-createCalculatedMetric "calc:service.toptestdbcalls" "Top URL DB Calls" "DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
+createCalculatedMetric "calc:service.toptestdbcalls" "Top Load Test DB Calls" "DATABASE_CHILD_CALL_COUNT" "COUNT" "$TAG_CONTEXT" "$TAG_KEY" "$TAG_VALUE" "LoadTestName" "{RequestAttribute:LTN}" "SINGLE_VALUE"
