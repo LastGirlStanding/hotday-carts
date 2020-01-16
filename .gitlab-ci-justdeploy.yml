@@ -16,7 +16,6 @@ stages:
   - deploy-production
 
 
-
 #################################################################
 # Deploy Stage
 #################################################################
@@ -67,6 +66,10 @@ dt_test_deployment_event:
   variables:
       GIT_STRATEGY: none
   script: |
+    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    export KUBECONFIG=${kubeconf_file}
+    echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    export KUBECONFIG=$KUBECONFIG
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
@@ -149,6 +152,10 @@ dt_stage_deployment_event:
     variables:
         GIT_STRATEGY: none
     script: |
+      echo ${kube_config} | base64 -d > ${kubeconf_file}
+      export KUBECONFIG=${kubeconf_file}
+      echo ${kube_config} | base64 -d > ${KUBECONFIG}
+      export KUBECONFIG=$KUBECONFIG    
       DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
       DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
@@ -231,6 +238,10 @@ dt_production_deployment_event:
   variables:
       GIT_STRATEGY: none
   script: |
+    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    export KUBECONFIG=${kubeconf_file}
+    echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    export KUBECONFIG=$KUBECONFIG    
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
