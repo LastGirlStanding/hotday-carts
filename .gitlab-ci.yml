@@ -8,7 +8,7 @@
 variables:
   APPLICATION_NAME: carts
   APPLICATION_SHORT_NAME: carts
-  kubeconf_file: /tmp/kubeconf
+
   
 stages:
   - deploy-test
@@ -28,10 +28,6 @@ deploy-cartsdb-in-test:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -47,10 +43,6 @@ deploy-carts-in-test:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -110,10 +102,6 @@ deploy-cartsdb-in-hardening:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -129,10 +117,6 @@ deploy-carts-in-staging:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -192,10 +176,6 @@ deploy-cartsdb-in-production:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -211,10 +191,6 @@ deploy-carts-in-production:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
-    - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
