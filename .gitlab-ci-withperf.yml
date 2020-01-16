@@ -13,8 +13,8 @@ variables:
 stages:
   - deploy-test
   - deploy-hardening
+  - load-hardening
   - deploy-production
-
 
 
 #################################################################
@@ -183,6 +183,28 @@ dt_stage_deployment_event:
       "
       echo $DT_PAYLOAD > payload.tmp
       curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
+              
+generate-load-in-hardening:
+  image: docker.io/mvilliger/jmeter-k8s-runner:latest
+  stage: load-hardening
+  environment:
+    name: carts-hardening
+  variables:
+    GIT_STRATEGY: fetch
+  script:
+    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - export KUBECONFIG=${kubeconf_file}
+    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - export KUBECONFIG=$KUBECONFIG
+    - export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
+    - jmeter -n -t ./jmeter/load.jmx
+      -l ${CI_ENVIRONMENT_SLUG}_perf.tlf
+      -JSERVER_URL="carts.${CI_ENVIRONMENT_SLUG}.${DOMAIN}"
+      -JSERVER_PORT=80
+      -JVUCount=10
+      -JLoopCount=500
+      -JThinkTime=250
+      -JDT_LTN="PerfCheck_${CI_COMMIT_SHA}"
 
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
