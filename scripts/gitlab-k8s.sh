@@ -11,8 +11,9 @@ K8NAME=$(kubectl config current-context)
 K8SAPI=$(kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}')
 K8STOKEN=$(kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep gitlab-admin | awk '{print $1}')|grep "token:"|awk '{print $2}')
 CACERT=$(cat cert.pem | sed ':a;N;$!ba;s/\n/\\r\\n/g')
-
+postdata='{"name":"'${K8NAME}'", "platform_kubernetes_attributes":{"api_url":"'${K8SAPI}'","token":"'${K8STOKEN}'","namespace":"","ca_cert":"'${CACERT}'"}}'
+echo ${postdata} > gitlab.json
 curl --header "Private-Token: ${GL_API_TOKEN}" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/clusters/user \
 -H "Accept: application/json" \
 -H "Content-Type:application/json" \
--X POST --data '{"name":"'${K8NAME}'", "platform_kubernetes_attributes":{"api_url":"'${K8SAPI}'","token":"'${K8STOKEN}'","namespace":"","ca_cert":"'${CACERT}'"}}'
+-X POST --data @gitlab.json
