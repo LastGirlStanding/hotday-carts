@@ -1,5 +1,6 @@
 image: mongo:latest
 replicaCount: 1
+domain: REPLACEME
 service:
   externalPort: 27017
   internalPort: 27017

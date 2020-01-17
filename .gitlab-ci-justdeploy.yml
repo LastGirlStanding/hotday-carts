@@ -16,6 +16,7 @@ stages:
   - deploy-production
 
 
+
 #################################################################
 # Deploy Stage
 #################################################################
@@ -31,6 +32,7 @@ deploy-cartsdb-in-test:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -50,6 +52,7 @@ deploy-carts-in-test:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -58,53 +61,6 @@ deploy-carts-in-test:
       --force
       ./charts/carts/
 
-dt_test_deployment_event:
-  stage: deploy-test
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
-  environment:
-    name: carts-test
-  variables:
-      GIT_STRATEGY: none
-  script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
-    export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
-    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
-    echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-    echo ${CI_COMMIT_SHORT_SHA}
-    export DT_PAYLOAD="
-    {
-      \"eventType\": \"CUSTOM_DEPLOYMENT\",
-      \"attachRules\": {
-        \"tagRule\" : {
-            \"meTypes\" : \"SERVICE\",
-            \"tags\" : [ 
-              {
-                \"context\": \"CONTEXTLESS\",
-                \"key\": \"hotday-tag-rule\", 
-                \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
-              }
-            ]
-        }
-      },
-      \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-      \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
-      \"deploymentProject\":\"${CI_PROJECT_ID}\",
-      \"ciBackLink\":\"${CI_PIPELINE_URL}\",
-      \"source\":\"GitLab\",
-      \"customProperties\":{
-        \"CI_JOB_URL\": \"${CI_JOB_URL}\",
-        \"CI_JOB_ID\": \"${CI_JOB_ID}\",
-        \"CI_PROJECT_ID\": \"${CI_PROJECT_ID}\",
-        \"Commit\": \"${GIT_COMMIT}\"
-      }
-    }
-    "
-    echo $DT_PAYLOAD > payload.tmp
-    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-      
 deploy-cartsdb-in-hardening:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
@@ -117,6 +73,7 @@ deploy-cartsdb-in-hardening:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -136,6 +93,7 @@ deploy-carts-in-staging:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -143,53 +101,6 @@ deploy-carts-in-staging:
       --wait
       --force
       ./charts/carts/
-
-dt_stage_deployment_event:
-    stage: deploy-hardening
-    image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
-    environment:
-      name: carts-hardening    
-    variables:
-        GIT_STRATEGY: none
-    script: |
-      echo ${kube_config} | base64 -d > ${kubeconf_file}
-      export KUBECONFIG=${kubeconf_file}
-      echo ${kube_config} | base64 -d > ${KUBECONFIG}
-      export KUBECONFIG=$KUBECONFIG    
-      DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-      DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
-      echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-      echo ${CI_COMMIT_SHORT_SHA}
-      export DT_PAYLOAD="
-      {
-        \"eventType\": \"CUSTOM_DEPLOYMENT\",
-        \"attachRules\": {
-          \"tagRule\" : {
-              \"meTypes\" : \"SERVICE\",
-              \"tags\" : [ 
-                {
-                  \"context\": \"CONTEXTLESS\",
-                  \"key\": \"hotday-tag-rule\", 
-                  \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
-                }
-              ]
-          }
-        },
-        \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-        \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
-        \"deploymentProject\":\"${CI_PROJECT_ID}\",
-        \"ciBackLink\":\"${CI_PIPELINE_URL}\",
-        \"source\":\"GitLab\",
-        \"customProperties\":{
-          \"CI_JOB_URL\": \"${CI_JOB_URL}\",
-          \"CI_JOB_ID\": \"${CI_JOB_ID}\",
-          \"CI_PROJECT_ID\": \"${CI_PROJECT_ID}\",
-          \"Commit\": \"${GIT_COMMIT}\"
-        }
-      }
-      "
-      echo $DT_PAYLOAD > payload.tmp
-      curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
 
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
@@ -203,6 +114,7 @@ deploy-cartsdb-in-production:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -222,6 +134,7 @@ deploy-carts-in-production:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -229,51 +142,3 @@ deploy-carts-in-production:
       --wait
       --force
       ./charts/carts/
-
-dt_production_deployment_event:
-  stage: deploy-production
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
-  environment:
-    name: carts-production    
-  variables:
-      GIT_STRATEGY: none
-  script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
-    export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG    
-    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
-    echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
-    echo ${CI_COMMIT_SHORT_SHA}
-    export DT_PAYLOAD="
-    {
-      \"eventType\": \"CUSTOM_DEPLOYMENT\",
-      \"attachRules\": {
-        \"tagRule\" : {
-            \"meTypes\" : \"SERVICE\",
-            \"tags\" : [ 
-              {
-                \"context\": \"CONTEXTLESS\",
-                \"key\": \"hotday-tag-rule\", 
-                \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
-              }
-            ]
-        }
-      },
-      \"deploymentName\":\"${CI_COMMIT_MESSAGE}\",
-      \"deploymentVersion\":\"${CI_COMMIT_SHORT_SHA}\",
-      \"deploymentProject\":\"${CI_PROJECT_ID}\",
-      \"ciBackLink\":\"${CI_PIPELINE_URL}\",
-      \"source\":\"GitLab\",
-      \"customProperties\":{
-        \"CI_JOB_URL\": \"${CI_JOB_URL}\",
-        \"CI_JOB_ID\": \"${CI_JOB_ID}\",
-        \"CI_PROJECT_ID\": \"${CI_PROJECT_ID}\",
-        \"Commit\": \"${GIT_COMMIT}\"
-      }
-    }
-    "
-    echo $DT_PAYLOAD > payload.tmp
-    curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-      

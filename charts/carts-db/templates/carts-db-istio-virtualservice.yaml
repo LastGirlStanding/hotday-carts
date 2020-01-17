@@ -8,7 +8,7 @@ spec:
   - "{{ .Release.Namespace }}-gateway.{{ .Release.Namespace }}"
   - mesh
   hosts:
-  - "carts-db.{{ .Release.Namespace }}.104.197.144.155.xip.io"
+  - "carts-db.{{ .Release.Namespace }}.{{ .Values.domain }}"
   - carts-db
   http:
   - route:

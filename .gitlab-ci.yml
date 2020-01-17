@@ -14,9 +14,8 @@ stages:
   - deploy-test
   - deploy-hardening
   - load-hardening
-  - keptn-sli-update
-  - keptn-eval-hardening
   - deploy-production
+
 
 
 #################################################################
@@ -34,6 +33,7 @@ deploy-cartsdb-in-test:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -53,6 +53,7 @@ deploy-carts-in-test:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -120,6 +121,7 @@ deploy-cartsdb-in-hardening:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -139,6 +141,7 @@ deploy-carts-in-staging:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -229,6 +232,7 @@ deploy-cartsdb-in-production:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
@@ -248,6 +252,7 @@ deploy-carts-in-production:
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
+    - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
       --namespace=${CI_ENVIRONMENT_SLUG}
