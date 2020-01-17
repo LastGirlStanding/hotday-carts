@@ -229,6 +229,10 @@ keptn-SLI-update:
   variables:
     GIT_STRATEGY: fetch
   script: |
+    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    export KUBECONFIG=${kubeconf_file}
+    echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    export KUBECONFIG=$KUBECONFIG
     sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
     cat sli-quality-gates-dynatrace-extended.yaml
     kubectl apply -f sli-quality-gates-dynatrace-extended.yaml
