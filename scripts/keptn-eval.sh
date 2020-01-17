@@ -1,6 +1,6 @@
 #!/bin/bash
-# Log into keptn
-# ${CI_ENVIRONMENT_SLUG}&tag=app:${APPLICATION_SHORT_NAME}
+APPLICATION_SHORT_NAME=$1
+CI_ENVIRONMENT_SLUG=$2
 KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
 KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
 keptn auth -a $KEPTN_API_TOKEN -e $KEPTN_ENDPOINT
