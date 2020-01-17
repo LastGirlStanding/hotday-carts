@@ -14,8 +14,9 @@ stages:
   - deploy-test
   - deploy-hardening
   - load-hardening
+  - keptn-sli-update
+  - keptn-eval-hardening
   - deploy-production
-
 
 
 #################################################################
@@ -219,6 +220,61 @@ generate-load-in-hardening:
       -JLoopCount=500
       -JThinkTime=250
       -JDT_LTN="PerfCheck_${CI_COMMIT_SHA}"
+
+keptn-SLI-update:
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  stage: keptn-sli-update
+  environment:
+    name: carts-hardening
+  variables:
+    GIT_STRATEGY: fetch
+  script: |
+    sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
+    cat sli-quality-gates-dynatrace-extended.yaml
+    kubectl apply -f sli-quality-gates-dynatrace-extended.yaml
+
+keptn-evaluation:
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  stage: keptn-eval-hardening
+  environment:
+    name: carts-hardening
+  variables:
+    GIT_STRATEGY: fetch
+  script: |
+    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    export KUBECONFIG=${kubeconf_file}
+    echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    export KUBECONFIG=$KUBECONFIG
+    export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
+    KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
+    KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
+    keptn auth -a $KEPTN_API_TOKEN -e $KEPTN_ENDPOINT
+    
+    # Start evaluation
+    ctxid=$(keptn send event start-evaluation --project=gitlab --service=${APPLICATION_SHORT_NAME} --stage=hardening --timeframe=10m|tee tk|grep "context:"|awk {'print $5'})
+    cat tk
+    
+    fin="0"
+    until [ "$fin" = "1" ]
+    do
+        status=$(curl -s -k -X GET "${KEPTN_ENDPOINT}/v1/event?keptnContext=${ctxid}&type=sh.keptn.events.evaluation-done" -H "accept: application/json" -H "x-token: ${KEPTN_API_TOKEN}"|jq .data.evaluationdetails.result)
+        if [ "$status" = "null" ]; then
+            echo "Status null will wait..."
+            sleep 5
+        else
+            fin="1"
+        fi
+    done
+    echo "eval status = ${status}"
+    if [ "$status" = "\"fail\"" ]; then
+            echo "Keptn Quality Gate - Evaluation failed!"
+            echo "For details visit the Bridge!"
+            exit 1
+    else
+            echo "Keptn Quality Gate - Evaluation Succeeded"
+    fi
+  when: delayed
+  start_in: 60 seconds
 
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
