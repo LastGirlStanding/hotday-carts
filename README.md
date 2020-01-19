@@ -1,59 +1,52 @@
-**Building Autonomous Operations for Pivotal Platform with Keptn** workshop given @[SpringOne Platform 2019](https://springoneplatform.io/)
+**Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
 
 # Overview
-In this workshop, you will get hands-on experience with the open source framework [Keptn](https://keptn.sh) and see how it can help you to manage your cloud-native applications on Kubernetes.
-
-1. For a great workshop experience, we ask you to keep track of your completed tasks. Therefore, please open this [spreadsheet](https://docs.google.com/spreadsheets/d/12uvI0MCJ12yAACO-jT1Yz81sOOClYZCl_HPv0f1bFmI/edit?usp=sharing) and enter your name.
+During this HOTday, you will get hands-on experience integrating [Keptn Quality Gates](https://keptn.sh) into [Gitlab](https://docs.gitlab.com/ee/ci/pipelines.html) CI/CD pipelines. 
 
 # Pre-requisites
 
 ## 1. Accounts
 
-* **Dynatrace** - Create an account for a [free trial Dynatrace SaaS tenant](https://www.dynatrace.com/trial) and create a PaaS and API token. See details in the [Keptn docs](https://keptn.sh/docs/0.4.0/monitoring/dynatrace/).
-* **Cloud provider account** - If you will be unable to ssh to the bastion host from your machine, a GCP account is suggested to utilize Google Cloud Shell. It is recommedned to sign up for personal free trial to have full admin rights and to not cause any issues with your enterprise account. The below link can be used to sign up for a free trial:
-   * [Google](https://cloud.google.com/free/)
-
+* **Dynatrace** - A Dynatrace environment has been created for every attendee. Each attendee should have a card placed on the table in front of them containing the login information.
+* **Gitlab trial account** - The HOT day's pipelines will be created using the pipeline features of Gitlab's SaaS offering. If you have not already done so please sign-up for a [Gitlab trial account](https://about.gitlab.com/free-trial/).
 
 ## 2. Tools
 
-In this workshop, we are providing two options that will have all the required tools installed. Each attendee should have a piece of paper at their seat with a workshop number that will serve as your username and a temporary password usable only during the workshop.
+In this workshop, we will utilize a bastion host to run Docker containers that will have all the required tools installed. For ease of use each attendee will utilize the same login and password as utilized for the Dynatrace environment. 
 
-* **Option A: Bastion host** - A bastion host has been provisioned on GCP with all necessary tools installed, home directories for every workshop attendee and pre-configured kubectl contexts to access each attendee's dedicated PKS cluster. 
-
-    ```console
-    ssh suppliedusername@bastion.pks.gcp.aklabs.io
-    ```
-
-* **Option B: Docker in Google Cloud Shell** - For those that can't utilize a local ssh client connecting to the bastion host. a docker image has been created containing the same contents of the bastion host. This docker image can be executed via Google Cloud Shell.
-1. For those that can't use an ssh client, just go to [Google Cloud](https://console.cloud.google.com) and activate Cloud Shell as shown below:
-    <details><summary>Activate Cloud Shell</summary>
-    <img src="images/cloud_shell.png" width="100%"/>
+* **Option A: Web based SSH** - Web based ssh access to the bastion host is provided by shell-in-a-box. 
+1. To access Shell-in-a-box on the bastion host, just go to [bastion host](https://bastionplaceholder.com) in your browser as shown below:
+    <details><summary>Access Shell-in-a-box</summary>
+    <img src="https://github.com/shellinabox/shellinabox/raw/master/misc/preview.gif?raw=true" width="50%"/>
     </details>
 
-1. To start the docker container you will use for this workshop, please execute:
+* **Option B: directly via SSH** - 
+1. For those that have a local ssh client and firewall rules that allow outbound access an outbound connection to the bastion host can be created like so:
+    <details><summary>local ssh client access</summary>
 
     ```console
-    docker run -d -t --name keptn-workshop mvilliger/keptn-workshop:0.5
+    ssh suppliedusername@bastionplaceholder.com
+    ```
+    
+    </details>
+
+1. To start and access the docker container you will use for this workshop, please execute, replacing {yourusername} with the username from your card:
+
+    ```console
+    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.1
     ```
 
-1. Afterwards, you can shell into this container. Please execute:
+1. If for some reason you lose access to the container, execute the following to access the container again:
 
-    ```console
-    docker exec -it keptn-workshop /bin/sh -c "[ -e /bin/bash ] && /bin/bash || /bin/sh"
+    ```console    
+    docker exec -it {yourusername} /bin/bash
     ```
 
-1. Finally, utilize the pks cli to fetch the necessary configuration context for kubectl:
-    ```console
-    pks login -k -a api.pks.gcp.aklabs.io -u <suppliedusername> -p <suppliedpassword>
-    pks get-credentials <suppliedusername>
-    ```  
-
-
-# Install Keptn
+# Exercise One: Environment Setup
 
 ## 1) Collect environment tokens
 
-1. Now, it's time to set up your workshop environment. During the setup, you will need the following values. We recommend copying the following lines into an editor, fill them out and keep them as a reference for later:
+1. Now, it's time to set up your workshop environment. During the setup, you will need the following values from Dynatrace. We recommend copying the following lines into an editor, fill them out and keep them as a reference for later:
 
     ```
     Dynatrace Host Name (e.g. abc12345.live.dynatrace.com):
@@ -80,11 +73,12 @@ In this workshop, we are providing two options that will have all the required t
 
 ## 2) Install Keptn
 
-Once you are logged onto the bastion host or shelled in to the container we are ready to install Keptn.
+Once you are logged onto the bastion host and shelled in to the container we are ready to install Keptn.
 
 Install the Keptn control plane components into your cluster, using the **Keptn CLI**:
 
 ```console
+cd /usr/keptn/scripts
 keptn install --platform=kubernetes
 ```
 
@@ -134,9 +128,9 @@ wait-service-deployment-distributor-fdcf99f67-g7jl9               1/1     Runnin
 
 This will install the Dynatrace OneAgent Operator into your cluster.
 
-1. Navigate to the `dynatrace-service` folder: 
+1. Navigate to the `scripts` folder: 
     ```console
-    cd /usr/keptn/dynatrace-service/deploy/scripts
+    cd /usr/keptn/scripts
     ```
 1. Define your credentials.
     ```console
@@ -144,14 +138,14 @@ This will install the Dynatrace OneAgent Operator into your cluster.
     ```
 1. Install Dynatrace OneAgent Operator on your Cluster.
     ```console
-    ./deployDynatraceOnPKS.sh
+    ./deployDynatraceOnGKE.sh
     ```
 
 The install will take about **2 minutes** to perform.
 
-## 4) Expose Keptn's Bridge - OPTIONAL
+## 4) Expose Keptn's Bridge
 
-The [Keptn’s bridge](https://keptn.sh/docs/0.5.0/reference/keptnsbridge/) provides an easy way to browse all events that are sent within Keptn and to filter on a specific Keptn context. When you access the Keptn’s bridge, all Keptn entry points will be listed in the left column. Please note that this list only represents the start of a deployment of a new artifact. Thus, more information on the executed steps can be revealed when you click on one event.
+The [Keptn’s bridge](https://keptn.sh/docs/0.6.0/reference/keptnsbridge/) provides an easy way to browse all events that are sent within Keptn and to filter on a specific Keptn context. When you access the Keptn’s bridge, all Keptn entry points will be listed in the left column. Please note that this list only represents the start of a deployment of a new artifact. Thus, more information on the executed steps can be revealed when you click on one event.
 
 In the default installation of Keptn, the bridge is only accessible via `kubectl port-forward`. To make things easier for workshop participants, we will expose it by creating a public URL for this component.
 
@@ -162,22 +156,77 @@ In the default installation of Keptn, the bridge is only accessible via `kubectl
 
 1. Execute the following script.
     ```console
-    ./exposeBridgePKS.sh
+    ./exposeBridge.sh
     ```
 
 1. It will give you the URL of your Bridge at the end of the script. Open a browser and verify the bridge is running.
 
     <img src="images/bridge-empty.png" width="500"/>
 
+## 5) Access and configure Gitlab
 
-# Hands-on Labs
+In this workshop we'll be utilizing Gitlab for both our source-code repository as well as our CI/CD tool. We have a couple of steps to perform to complete configuration of Gitlab for this workshop. Here we'll be forking the repo containing the workshop content, configuring Gitlab's Kubernetes integration, and configuring the git cli so we can push the code changes we'll be making during the workshop.
 
-After provision the cluster and installing Keptn, we are now ready to explore to execute the following hands-on labs. They are based on each other, why it is important to complete them according to this order:
+1. Fork the following repo: https://gitlab.com/akirasoft/hotday-carts
+    <img src="images/fork_repo.png" width="50%"/>
 
-1. Onboarding the carts service: [Lab](./01_Onboarding_carts_service)
-1. Deploying the carts service: [Lab](./02_Deploying_the_carts_service)
-1. Introducing quality gates: [Lab](./03_Introducing_quality_gates)
-1. **Homework ;)** Self-healing with Keptn: [Lab](./04_Self_Healing)
+1. Note the Gitlab ProjectID
+
+1. Create and note a Gitlab Access Token: 
+    1. Navigate to your user profile (upper right icon)
+    1. Select Access Token
+    1. Create access token with all rights
+    1. Note token somewhere
+    <img src="images/token.png" width="50%"/>
+
+
+1. Back in our shell, run the gitlab-k8s.sh script with supplied ProjectID and Access Token.
+    ```console
+    cd /usr/keptn/scripts
+    ./gitlab-k8s.sh 1234567 AbcdEF1gHijk2LmnOPqr
+    ```
+
+1. Back in the Gitlab UI, Navigate to your configured Kubernetes cluster and deploy Gitlab's Tiller and a Gitlab Runner.
+
+    **NOTE**, While Gitlab does supply shared runners for their SaaS environment we will utilize dedicated Runners in each of our Kubernetes clusters to eliminate possible errors.
+
+    1. Select Operations on the leftmost navigation bar
+    1. Select Kubernetes from the dropdown
+    1. Select the Kubernetes cluster name listed 
+    1. Click "Install" for Helm Tiller (this may take several minutes)
+    1. Click "Install" for Gitlab Runner (this may also take several minutes)
+
+1. Configure Gitlab to no longer use the shared runners and to exclusively use the Specific Runner
+
+    1. Select Settings -> CI / CD
+    1. Expand Runners
+    1. Click "Disable Shared Runners"
+    1. Ensure a specific runner is available for the project
+    <img src="images/runners.png" width="50%">
+
+1. Back in our shell, configure git cli and clone the repo:
+    1. Configure git credentials for CLI:
+        ```console
+        this needs refinement
+        ```
+    1. Clone your forked repo:
+        1. In WebUI project view, copy the HTTPS Clone address
+        1. In console, clone the repo:
+        ```console
+        cd /usr/keptn
+        git clone https://gitlab.com/<yourusername>/hotday-carts.git
+        ```
+
+After completing our initial exercise we should now have a Kubernetes cluster with Keptn, Dynatrace, and Gitlab configured. We are now ready to explore to execute the following hands-on labs. Each exercise depends on steps from the previous exercise so it is important that they be completed in order:
+
+1. Simple Gitlab pipeline to deploy carts to Kubernetes: [Lab](./02_Simple_Deployment_with_Gitlab)
+1. Modify Gitlab pipeline to push Deployment events to Dynatrace: [Lab](./03_Adding_Deployment_Events)
+1. Modify Gitlab pipeline to add automated load testing via jmeter: [Lab](./04_Adding_load_testing)
+1. Modify Gitlab pipeline to automatically check Dynatrace for problems before Prod deploy: [Lab](./05_Adding_Problem_Check)
+1. Keptn Quality Gates recap and implementation within Gitlab pipeline: [Lab](./06_Keptn_Quality_Gates)
+1. Full Keptn managed deployment [Lab](./07_Full_Keptn_Walkthrough)
+
+
 
 # Keptn Community
 
