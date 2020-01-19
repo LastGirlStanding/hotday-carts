@@ -1,3 +1,5 @@
+**Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
+
 # Exercise 5: Modify pipeline to automatically check Dynatrace before promoting release
 In this exercise we will configure our pipeline to check Dynatrace for problems via an API request. 
 

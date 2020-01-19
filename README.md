@@ -168,16 +168,20 @@ In the default installation of Keptn, the bridge is only accessible via `kubectl
 In this workshop we'll be utilizing Gitlab for both our source-code repository as well as our CI/CD tool. We have a couple of steps to perform to complete configuration of Gitlab for this workshop. Here we'll be forking the repo containing the workshop content, configuring Gitlab's Kubernetes integration, and configuring the git cli so we can push the code changes we'll be making during the workshop.
 
 1. Fork the following repo: https://gitlab.com/akirasoft/hotday-carts
+
     <img src="images/fork_repo.png" width="50%"/>
 
 1. Note the Gitlab ProjectID
+
+    <img src="images/gitlab_projectID.png" width="50%"/>
 
 1. Create and note a Gitlab Access Token: 
     1. Navigate to your user profile (upper right icon)
     1. Select Access Token
     1. Create access token with all rights
     1. Note token somewhere
-    <img src="images/token.png" width="50%"/>
+
+
 
 
 1. Back in our shell, run the gitlab-k8s.sh script with supplied ProjectID and Access Token.
@@ -202,6 +206,7 @@ In this workshop we'll be utilizing Gitlab for both our source-code repository a
     1. Expand Runners
     1. Click "Disable Shared Runners"
     1. Ensure a specific runner is available for the project
+    
     <img src="images/runners.png" width="50%">
 
 1. Back in our shell, configure git cli and clone the repo:

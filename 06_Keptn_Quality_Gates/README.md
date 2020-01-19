@@ -1,3 +1,5 @@
+**Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
+
 # Exercise 6: Keptn Quality Gates recap and implementation within pipeline
 In this exercise we will configure our pipeline to include Keptn Quality Gates. 
 
