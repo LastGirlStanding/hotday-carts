@@ -164,7 +164,6 @@ dt_stage_deployment_event:
       export KUBECONFIG=$KUBECONFIG    
       DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
       DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
-      echo ${DT_TENANT_URL}
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
       echo ${CI_COMMIT_SHORT_SHA}
       export DT_PAYLOAD="
@@ -233,7 +232,7 @@ dt_get_problems:
     export KUBECONFIG=$KUBECONFIG    
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
-    problems=$(curl -X GET "https://${DT_TENANT_ID}.live.dynatrace.com/api/v1/problem/feed?tag=hotday-tag-rule:${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}" -H "Authorization: Api-Token ${DT_API_TOKEN}" | jq ".result.problems[0]")
+    problems=$(curl -X GET "https://${DT_TENANT_URL}/api/v1/problem/feed?tag=hotday-tag-rule:${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}" -H "Authorization: Api-Token ${DT_API_TOKEN}" | jq ".result.problems[0]")
     if [ "$problems" == "null" ]; then
       echo "No problem was found with your deployment."
     else
@@ -242,8 +241,8 @@ dt_get_problems:
       echo "Problem ID:"
       echo $problems|jq .id
       echo $problems|jq .rankedImpacts[0]
-      echo "https://${DT_TENANT_ID}.live.dynatrace.com/#problems/problemdetails;pid=${problemid}"
-      python /sendslack.py "A problem has been detected by Dynatrace. Please check https://${DT_TENANT_ID}.live.dynatrace.com/#problems/problemdetails;pid=${problemid}"
+      echo "https://${DT_TENANT_URL}/#problems/problemdetails;pid=${problemid}"
+      python /sendslack.py "A problem has been detected by Dynatrace. Please check https://${DT_TENANT_URL}/#problems/problemdetails;pid=${problemid}"
       exit 1
     fi
   when: delayed
