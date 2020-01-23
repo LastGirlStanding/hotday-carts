@@ -164,6 +164,7 @@ dt_stage_deployment_event:
       export KUBECONFIG=$KUBECONFIG    
       DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
       DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
+      echo ${DT_TENANT_URL}
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
       echo ${CI_COMMIT_SHORT_SHA}
       export DT_PAYLOAD="
