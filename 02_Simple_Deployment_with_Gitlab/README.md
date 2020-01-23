@@ -81,7 +81,7 @@ Here we define the script that will be executed within the Docker container. Thi
       ./charts/carts-db/ 
 ```
 
-#### Putting it all together, complete job definition:
+## Putting it all together, complete job definition:
 ```console  
 #################################################################
 # Deploy Stage
@@ -120,6 +120,7 @@ git commit -m "simple deployment example"
 git push origin master
 ```
 Once this is complete, the pipeline should immediately begin executing:
-  <img src="images/pipeline-running.png" width="50%">
+
+  <img src="../images/pipeline-running.png" width="50%">
 
   
