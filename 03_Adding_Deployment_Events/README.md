@@ -86,7 +86,7 @@ Read more about the Dynatrace events api [here](https://www.dynatrace.com/suppor
 
 ### Pulling it all together:
 
-For this job we're using a simple docker container created for use by our pipeline today (see the Dockerfile [here](https://github.com/akirasoft/keptn-k8s-runner/blob/master/Dockerfile)). The script our job executes takes advantage of the Dynatrace credentials we stored as a Kubernetes secret during environment creation to populate environment variables avoiding needing to provide those credentials to Gitlab. The POST payload is stored to an environment variable (VERY IMPORTANT, note the escaped quotes) and then to a file. Curl is then used to post the deployment event to the Dynatrace API.
+For this job we're using a simple docker container created for use by our pipeline today (see the Dockerfile [here](https://github.com/akirasoft/keptn-k8s-runner/blob/master/Dockerfile)). The The script our job executes takes advantage of the Dynatrace credentials we stored as a Kubernetes secret during environment creation to populate environment variables avoiding needing to provide those credentials to Gitlab. The POST payload is stored to an environment variable (VERY IMPORTANT, note the escaped quotes) and then to a file. Curl is then used to post the deployment event to the Dynatrace API.
 
 ```console
 dt_test_deployment_event:
@@ -141,6 +141,9 @@ dt_test_deployment_event:
 
 # Deploy the pipeline including deployment events
 In this exercise we will configure our pipeline to include Dynatrace deployment events. These events will enrich the DAVIS root cause analysis engine and provide trackback to our pipelines from within Dynatrace.
+Our complete pipeline definition represents 9 jobs deploying carts and carts-db and adding a deployment notification to carts for each stage. The complete pipeline can be viewed [here](../.gitlab-ci-withevents.yml)
+
+Please paste the following commands into your shell to make the pipeline change, commit it and push it via the git cli:
 
 ```console
 cd /usr/keptn/hotday-carts
