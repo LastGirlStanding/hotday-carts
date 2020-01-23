@@ -2,7 +2,7 @@
 
 In our previous exercise we deployed the Carts service and corresponding DB to each of three Kubernetes namespaces. In this exercise we will be adding a call to the Dynatrace Events API to add a deployment notification. Out of all the concepts we will be reviewing today this is one that everyone should include in their pipelines no matter what! By including deployment notifications in our pipelines Dynatrace's root-cause-analysis engine will include these events in determining the cause of a detected problem and provide an easy link back to the applicable pipeline run and then the commit that triggered that pipeline run!
 
-<img src="../images/deployment-events.png" width="50%"/>
+<img src="../images/deployment_events.png" width="50%"/>
 
 
 # Exercise 3: Modify pipeline to automatically push deployment events to enhance DAVIS root cause analysis
