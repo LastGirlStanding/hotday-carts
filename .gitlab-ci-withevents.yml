@@ -194,7 +194,7 @@ dt_stage_deployment_event:
       "
       echo $DT_PAYLOAD > payload.tmp
       curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-
+  
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
