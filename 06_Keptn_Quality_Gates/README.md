@@ -1,7 +1,7 @@
 **Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
 
 # Exercise 6: Keptn Quality Gates recap and implementation within pipeline
-In this exercise we will configure our pipeline to include Keptn Quality Gates. 
+In this exercise we will configure our pipeline to include [Keptn Quality Gates](https://keptn.sh/docs/0.6.0/usecases/deployments-with-quality-gates/). 
 
 1. Enable Dynatrace SLI service for Keptn:
     ```console
@@ -11,19 +11,19 @@ In this exercise we will configure our pipeline to include Keptn Quality Gates.
     kubectl apply -f ../manifests/dynatrace-sli-service.yaml    
     ```
 
-1. Onboard Keptn project:
+1. Onboard Keptn project called `gitlab`:
     ```console
     cd /usr/keptn/hotday-carts
     keptn create project gitlab --shipyard=./shipyard-standalone.yaml
     ```
 
-1. Onboard Carts service to the gitlab Keptn project
+1. Onboard Carts service to the `gitlab` Keptn project:
     ```console
     cd /usr/keptn/hotday-carts
     keptn create service carts --project=gitlab
     ```
 
-1. Add initial Service Level Objectives for Keptn to evaluate:
+1. Add initial [Service Level Objectives](https://github.com/keptn/spec/blob/0.1.2/sre.md) for Keptn to evaluate:
     ```console
     cd /usr/keptn/hotday-carts
     keptn add-resource --project=gitlab --service=carts --stage=hardening --resource=slo_quality-gates.yaml --resourceUri=slo.yaml
