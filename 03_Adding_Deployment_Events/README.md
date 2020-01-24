@@ -4,7 +4,6 @@ In our previous exercise we deployed the Carts service and corresponding DB to e
 
 <img src="../images/deployment_events.png" width="50%"/>
 
-
 # Exercise 3: Modify pipeline to automatically push deployment events to enhance DAVIS root cause analysis
 
 ## The Dynatrace Events API: /api/v1/events
@@ -18,15 +17,15 @@ attachRules | json object | What Dynatrace entities to attach the event to
 source | string | Label for source of the event, "GitLab" here
 deploymentName | string | Name of the deployment, great place to use commit message
 deploymentVersion | string | Version of the deployment, great place to use a build hash or tagged version
-deploymentProject | string | not technically required but useful, here we'll be linking to Gitlab ProjectID
-customProperties | json object | also not technically required but useful, here we'll build out an object containing links back to Gitlab and other useful info
-ciBackLink | string | again, not required but useful, here we'll include a link taking us to the pipeline view in Gitlab
+deploymentProject | string | not technically required but useful, here we'll be linking to GitLab ProjectID
+customProperties | json object | also not technically required but useful, here we'll build out an object containing links back to GitLab and other useful info
+ciBackLink | string | again, not required but useful, here we'll include a link taking us to the pipeline view in GitLab
 
 ### attachRules details
 
-The attach rules object consists of several elements. It can contain one or more tagRule objects. Each tagRule must contain a value for meTypes (in this case we are looking for SERVICES) and the tags array. During environment setup we used the Dynatrace configuration API to create a tag rule creating the "hotday-tag-rule" tag with a value matching the application name and Kubernetes Namespace. From the events API perspective this is a CONTEXTLESS tag, with the key of "hotday-tag-rule" and then we will utilize Gitlab parameters to populate the key's value. 
+The *attachRules* object consists of several elements. It can contain one or more *tagRule* objects. Each tagRule must contain a value for *meTypes* (in this case we are looking for SERVICES) and the tags array. During environment setup we used the Dynatrace configuration API to create a tag rule creating the "hotday-tag-rule" tag with a value matching the application name and Kubernetes namespace. From the events API perspective this is a CONTEXTLESS tag, with the key of "hotday-tag-rule" and then we will utilize GitLab parameters to populate the key's value. 
 
-```console
+```json
     "attachRules": {
       "tagRule" : {
           "meTypes" : "SERVICE",
@@ -42,8 +41,9 @@ The attach rules object consists of several elements. It can contain one or more
 
 ### customProperties details
 
-The customProperties object is made up of key:value pairs. Dynatrace will turn URLs into hyperlinks. So here we'll make use of Gitlab PIpeline built-in variables to provide a link to the invidual Job run (useful to view job logs), the ID of the Job, ID of the Project and the git commit hash.
-```console
+The customProperties object is made up of key:value pairs. Dynatrace will turn URLs into hyperlinks. So here we'll make use of GitLab PIpeline built-in variables to provide a link to the invidual Job run (useful to view job logs), the ID of the Job, ID of the Project and the git commit hash.
+
+```json
     "customProperties":{
       "CI_JOB_URL": "${CI_JOB_URL}",
       "CI_JOB_ID": "${CI_JOB_ID}",
@@ -53,7 +53,7 @@ The customProperties object is made up of key:value pairs. Dynatrace will turn U
 ```
 
 ### Complete Dynatrace Event post body
-```console
+```json
 {
     "eventType": "CUSTOM_DEPLOYMENT",
     "attachRules": {
@@ -81,14 +81,15 @@ The customProperties object is made up of key:value pairs. Dynatrace will turn U
     }
   }
 ```
-Read more about the Dynatrace events api [here](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-api/environment-api/events/).
+
+Read more about the Dynatrace events API [here](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-api/environment-api/events/).
 
 
 ### Pulling it all together:
 
-For this job we're using a simple docker container created for use by our pipeline today (see the Dockerfile [here](https://github.com/akirasoft/keptn-k8s-runner/blob/master/Dockerfile)). The The script our job executes takes advantage of the Dynatrace credentials we stored as a Kubernetes secret during environment creation to populate environment variables avoiding needing to provide those credentials to Gitlab. The POST payload is stored to an environment variable (VERY IMPORTANT, note the escaped quotes) and then to a file. Curl is then used to post the deployment event to the Dynatrace API.
+For this job, we're using a simple Docker container created for use by our pipeline today (see the Dockerfile [here](https://github.com/akirasoft/keptn-k8s-runner/blob/master/Dockerfile)). The script our job executes takes advantage of the Dynatrace credentials we stored as a Kubernetes secret during environment creation to populate environment variables avoiding needing to provide those credentials to GitLab. The POST payload is stored to an environment variable (**VERY IMPORTANT:** note the escaped quotes) and then to a file. Curl is then used to post the deployment event to the Dynatrace API.
 
-```console
+```yaml
 dt_test_deployment_event:
   stage: deploy-test
   image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
@@ -137,7 +138,6 @@ dt_test_deployment_event:
     curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
       
 ```
-
 
 # Deploy the pipeline including deployment events
 In this exercise we will configure our pipeline to include Dynatrace deployment events. These events will enrich the DAVIS root cause analysis engine and provide trackback to our pipelines from within Dynatrace.
