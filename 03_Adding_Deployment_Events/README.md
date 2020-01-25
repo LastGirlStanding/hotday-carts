@@ -1,6 +1,6 @@
 **Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
 
-In our previous exercise we deployed the Carts service and corresponding DB to each of three Kubernetes namespaces. In this exercise we will be adding a call to the Dynatrace Events API to add a deployment notification. Out of all the concepts we will be reviewing today this is one that everyone should include in their pipelines no matter what! By including deployment notifications in our pipelines Dynatrace's root-cause-analysis engine will include these events in determining the cause of a detected problem and provide an easy link back to the applicable pipeline run and then the commit that triggered that pipeline run!
+In our previous exercise, we deployed the Carts service and corresponding DB to each of three Kubernetes namespaces. In this exercise, we will be adding a call to the Dynatrace Events API to add a deployment notification. Out of all the concepts we will be reviewing today this is one that everyone should include in their pipelines no matter what! By including deployment notifications in our pipelines Dynatrace's root-cause-analysis engine will include these events in determining the cause of a detected problem and provide an easy link back to the applicable pipeline run and then the commit that triggered that pipeline run!
 
 <img src="../images/deployment_events.png" width="50%"/>
 
@@ -8,7 +8,7 @@ In our previous exercise we deployed the Carts service and corresponding DB to e
 
 ## The Dynatrace Events API: /api/v1/events
 
-Calls to the Dynatrace events API have a number of required elements:
+Calls to the Dynatrace events API have several required elements:
 
 Element | type | description
 --- | --- | ---
@@ -140,8 +140,6 @@ dt_test_deployment_event:
 ```
 
 # Deploy the pipeline including deployment events
-In this exercise we will configure our pipeline to include Dynatrace deployment events. These events will enrich the DAVIS root cause analysis engine and provide trackback to our pipelines from within Dynatrace.
-Our complete pipeline definition represents 9 jobs deploying carts and carts-db and adding a deployment notification to carts for each stage. The complete pipeline can be viewed [here](../.gitlab-ci-withevents.yml)
 
 Please paste the following commands into your shell to make the pipeline change, commit it and push it via the git cli:
 
