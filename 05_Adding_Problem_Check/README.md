@@ -1,7 +1,5 @@
 **Build Resiliency into your Continuous Delivery Pipeline​ with AI and Automation** workshop given @[Dynatrace Perform 2020](https://https://www.dynatrace.com/perform-vegas//)
 
-In our previous exercise, we added Dynatrace API calls to our pipeline notifying Dynatrace of deployment events. In this exercise, we will be adding a jmeter load test stage that occurs in the hardening stage. Additionally, our load test script will make use of the [x-dynatrace-test HTTP header](https://www.dynatrace.com/support/help/setup-and-configuration/integrations/third-party-integrations/test-automation-frameworks/dynatrace-and-load-testing-tools-integration/) and Dynatrace's [request attribute handling](https://www.dynatrace.com/support/help/how-to-use-dynatrace/transactions-and-services/basic-concepts/request-attributes/) so that we can identify our load test requests from within Dynatrace.
-
 In our previous exercise, we added a load test to our pipeline. In this exercise, we will be adding a job to check DAVIS for problems in the hardening stage via a call to the [Dynatrace Problems API](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-api/environment-api/problems/). This will allow us to automatically halt the pipeline before a deploy to production if a problem is detected in our hardening stage. 
 
 # Exercise 5: Modify pipeline to automatically check Dynatrace before promoting release
