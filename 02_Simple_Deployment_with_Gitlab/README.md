@@ -122,7 +122,7 @@ Please paste the following commands into your shell to make the pipeline change,
 
 ```console
 cd /usr/keptn/hotday-carts
-cp .gitlab-ci-justdeploy.yml .gitlab-ci.yml
+cp gitlab-ci-justdeploy.yml .gitlab-ci.yml
 git add .gitlab-ci.yml
 git commit -m "simple deployment example"
 git push origin master

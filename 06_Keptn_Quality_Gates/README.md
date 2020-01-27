@@ -215,7 +215,7 @@ These calculated service metrics can be easily incorporated into our SLI file (n
     Adjust pipeline to include Keptn Quality Gates:
     ```console
     cd /usr/keptn/hotday-carts
-    cp .gitlab-ci-full.yml .gitlab-ci.yml
+    cp gitlab-ci-full.yml .gitlab-ci.yml
     git add .gitlab-ci.yml
     git commit -m "include quality gates"
     git push origin master

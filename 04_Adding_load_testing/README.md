@@ -107,7 +107,7 @@ Adjust pipeline to include performance tests:
 
 ```console
 cd /usr/keptn/hotday-carts
-cp .gitlab-ci-withperf.yml .gitlab-ci.yml
+cp gitlab-ci-withperf.yml .gitlab-ci.yml
 git add .gitlab-ci.yml
 git commit -m "include performance tests"
 git push origin master

@@ -146,7 +146,7 @@ dt_get_problems:
 Adjust pipeline to include problem check via Dynatrace API:
 ```console
 cd /usr/keptn/hotday-carts
-cp .gitlab-ci-withproblemcheck.yml .gitlab-ci.yml
+cp gitlab-ci-withproblemcheck.yml .gitlab-ci.yml
 git add .gitlab-ci.yml
 git commit -m "include problem check"
 git push origin master

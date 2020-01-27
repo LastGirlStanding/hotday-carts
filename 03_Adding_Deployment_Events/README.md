@@ -145,7 +145,7 @@ Please paste the following commands into your shell to make the pipeline change,
 
 ```console
 cd /usr/keptn/hotday-carts
-cp .gitlab-ci-withevents.yml .gitlab-ci.yml
+cp gitlab-ci-withevents.yml .gitlab-ci.yml
 git add .gitlab-ci.yml
 git commit -m "include Deployment events"
 git push origin master
