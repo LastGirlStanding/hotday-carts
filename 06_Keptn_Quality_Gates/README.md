@@ -8,14 +8,6 @@ The brief presentation given before this exercise explained how we utilize Keptn
 
 <img src="../images/SRE_in_a_Nutshell.png" width="50%">
 
-## Deploy the Dynatrace SLI service
-
-Keptn Quality Gates utilize an SLI provider to handle communications with a metric source based on the queries that are supplied in our SLI definition yaml. We will be utilizing Dynatrace as our SLI provider so we must first deploy the Dynatrace SLI Service:
-
-```console
-kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.0/deploy/service.yaml 
-```
-
 ## Keptn onboarding for our Gitlab pipeline and carts service
 
 To utilize Keptn to evaluate our SLIs against configured SLOs we must first create a project and onboard our carts service to that project. Since Keptn is only evaluating results for the hardening stage we have a very simple shipyard file containing only the hardening stage.
@@ -35,6 +27,23 @@ stages:
     ```console
     cd /usr/keptn/hotday-carts
     keptn create service carts --project=gitlab
+    ```
+
+## Deploy the Dynatrace SLI service
+
+Keptn Quality Gates utilize an SLI provider to handle communications with a metric source based on the queries that are supplied in our SLI definition yaml. 
+
+1. Deploy the Dynatrace SLI Service
+
+    ```console
+    kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.0/deploy/service.yaml 
+    ```
+
+1. Configure Keptn to utilize Dynatrace as the SLI provider for the gitlab project:
+
+    ```console
+    cd /usr/keptn/scripts
+    ./enableDynatraceSLIforProject.sh gitlab
     ```
 
 ## Defining SLIs and SLOs
@@ -215,6 +224,7 @@ These calculated service metrics can be easily incorporated into our SLI file (n
 1. Adjust the helm chart to deploy 
 
     file contents:
+
     ```yaml
     image: docker.io/keptnexamples/carts:0.10.2
     replicaCount: 1
@@ -222,12 +232,14 @@ These calculated service metrics can be easily incorporated into our SLI file (n
     ```
 
     Suggested commands to make change (can also be done directly in browser against GitLab repo):
+
     ```console
     cd /usr/keptn/hotday-carts/
     vi ./charts/carts/values.yaml
     git add ./charts/carts/values.yaml
     git commit -m "deploy slow carts"
     git push origin master
+    ```
 
     ```yaml
     image: docker.io/keptnexamples/carts:0.10.2

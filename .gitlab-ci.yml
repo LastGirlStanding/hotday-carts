@@ -282,7 +282,7 @@ keptn-evaluation:
             echo "Keptn Quality Gate - Evaluation Succeeded"
     fi
   when: delayed
-  start_in: 60 seconds
+  start_in: 15 seconds
 
 dt_get_problems:
   stage: dynatrace-get-problems
@@ -310,7 +310,7 @@ dt_get_problems:
       exit 1
     fi
   when: delayed
-  start_in: 10 minutes  
+  start_in: 2 minutes  
 
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
