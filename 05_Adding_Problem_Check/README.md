@@ -123,8 +123,8 @@ dt_get_problems:
     export KUBECONFIG=${kubeconf_file}
     echo ${kube_config} | base64 -d > ${KUBECONFIG}
     export KUBECONFIG=$KUBECONFIG    
-    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
+    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
+    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     problems=$(curl -X GET "https://${DT_TENANT_URL}/api/v1/problem/feed?tag=hotday-tag-rule:${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}" -H "Authorization: Api-Token ${DT_API_TOKEN}" | jq ".result.problems[0]")
     if [ "$problems" == "null" ]; then
       echo "No problem was found with your deployment."
