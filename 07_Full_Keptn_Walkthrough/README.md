@@ -21,7 +21,7 @@ stages:
 
 ```console
 cd /usr/keptn/onboarding-carts
-keptn create project sockshop --shipyard=./shipyard-keptn.yaml
+keptn create project sockshop --shipyard=./shipyard.yaml
 ```
 
 ## Onboard Carts service

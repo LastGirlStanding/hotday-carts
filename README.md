@@ -33,7 +33,7 @@ In this workshop, we will utilize a bastion host to run Docker containers that w
 1. To start and access the Docker container you will use for this workshop, please execute, replacing {yourusername} with the username from your card:
 
     ```console
-    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.1
+    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.6 && docker exec -it {yourusername} /bin/bash
     ```
 
 1. If for some reason you lose access to the container, execute the following to access the container again:
