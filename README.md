@@ -211,11 +211,18 @@ In this workshop, we'll be utilizing GitLab for both our source-code repository 
     <img src="images/runners.png" width="50%">
 
 1. Back in our shell, configure git cli and clone the repo:
+
+    To avoid having to enter our credentials every time we push a commit via git we'll want to configure git credential storage
+
     1. Configure git credentials for CLI:
         ```console
-        this needs refinement
+        git config --global credential.helper store
+        mkdir ~/.git
+        vim ~/.git/.git-credentials
         ```
-        
+        make the contents of the git credentials file contain the following, replacing username/personalaccesstoken with your own values
+        https://<USERNAME>:<PERSONALACCESSTOKEN>@gitlab.com
+
     1. Clone your forked repo:
         1. In WebUI project view, copy the HTTPS Clone address
         1. In console, clone the repo:
@@ -224,7 +231,7 @@ In this workshop, we'll be utilizing GitLab for both our source-code repository 
         git clone https://gitlab.com/<yourusername>/hotday-carts.git
         ```
 
-After completing our initial exercise, we should now have a Kubernetes cluster with Keptn, Dynatrace, and GitLab configured. We are now ready to explore to execute the following hands-on labs. Each exercise depends on steps from the previous exercise so it is important that they be completed in order:
+After completing our initial exercise, we should now have a Kubernetes cluster with Keptn, Dynatrace, and GitLab configured. We are now ready to explore to execute the following hands-on labs. Each exercise depends on steps from the previous exercise so they must be completed in order:
 
 1. Simple GitLab pipeline to deploy carts to Kubernetes: [Lab](./02_Simple_Deployment_with_Gitlab)
 1. Modify GitLab pipeline to push Deployment events to Dynatrace: [Lab](./03_Adding_Deployment_Events)
