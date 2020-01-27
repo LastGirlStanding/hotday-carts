@@ -111,6 +111,9 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
         export KUBECONFIG=${kubeconf_file}
         echo ${kube_config} | base64 -d > ${KUBECONFIG}
         export KUBECONFIG=$KUBECONFIG
+        KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
+        KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
+        keptn auth -a $KEPTN_API_TOKEN -e $KEPTN_ENDPOINT    
         sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
         cat sli-quality-gates-dynatrace-extended.yaml
         keptn add-resource --project=gitlab --stage=hardening --service=carts --resource=sli-quality-gates-dynatrace-extended.yaml --resourceUri=dynatrace/sli.yaml
