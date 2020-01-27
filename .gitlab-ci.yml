@@ -9,7 +9,7 @@ variables:
   APPLICATION_NAME: carts
   APPLICATION_SHORT_NAME: carts
   kubeconf_file: /tmp/kubeconf
-
+  
 stages:
   - deploy-test
   - deploy-hardening
@@ -37,7 +37,7 @@ deploy-cartsdb-in-test:
       --namespace=${CI_ENVIRONMENT_SLUG}
       --install
       --wait
-      ./charts/carts-db/
+      ./charts/carts-db/ 
 
 deploy-carts-in-test:
   image: docker.io/devth/helm:v2.12.3
@@ -72,8 +72,8 @@ dt_test_deployment_event:
     export KUBECONFIG=${kubeconf_file}
     echo ${kube_config} | base64 -d > ${KUBECONFIG}
     export KUBECONFIG=$KUBECONFIG
-    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
+    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
+    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
     echo ${CI_COMMIT_SHORT_SHA}
     export DT_PAYLOAD="
@@ -82,10 +82,10 @@ dt_test_deployment_event:
       \"attachRules\": {
         \"tagRule\" : {
             \"meTypes\" : \"SERVICE\",
-            \"tags\" : [
+            \"tags\" : [ 
               {
                 \"context\": \"CONTEXTLESS\",
-                \"key\": \"hotday-tag-rule\",
+                \"key\": \"hotday-tag-rule\", 
                 \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
               }
             ]
@@ -106,7 +106,7 @@ dt_test_deployment_event:
     "
     echo $DT_PAYLOAD > payload.tmp
     curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-
+      
 deploy-cartsdb-in-hardening:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-hardening
@@ -152,16 +152,16 @@ dt_stage_deployment_event:
     stage: deploy-hardening
     image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
     environment:
-      name: carts-hardening
+      name: carts-hardening    
     variables:
         GIT_STRATEGY: none
     script: |
       echo ${kube_config} | base64 -d > ${kubeconf_file}
       export KUBECONFIG=${kubeconf_file}
       echo ${kube_config} | base64 -d > ${KUBECONFIG}
-      export KUBECONFIG=$KUBECONFIG
-      DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-      DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
+      export KUBECONFIG=$KUBECONFIG    
+      DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
+      DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
       echo ${CI_COMMIT_SHORT_SHA}
       export DT_PAYLOAD="
@@ -170,10 +170,10 @@ dt_stage_deployment_event:
         \"attachRules\": {
           \"tagRule\" : {
               \"meTypes\" : \"SERVICE\",
-              \"tags\" : [
+              \"tags\" : [ 
                 {
                   \"context\": \"CONTEXTLESS\",
-                  \"key\": \"hotday-tag-rule\",
+                  \"key\": \"hotday-tag-rule\", 
                   \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
                 }
               ]
@@ -194,7 +194,7 @@ dt_stage_deployment_event:
       "
       echo $DT_PAYLOAD > payload.tmp
       curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-
+  
 deploy-cartsdb-in-production:
   image: docker.io/devth/helm:v2.12.3
   stage: deploy-production
@@ -240,16 +240,16 @@ dt_production_deployment_event:
   stage: deploy-production
   image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
   environment:
-    name: carts-production
+    name: carts-production    
   variables:
       GIT_STRATEGY: none
   script: |
     echo ${kube_config} | base64 -d > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
     echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
-    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_TENANT | cut -c 3-)
-    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace-credentials-gitlab -ojsonpath={.data.dynatrace-credentials} | base64 -d | yq r - -d '*' DT_API_TOKEN | cut -c 3-)
+    export KUBECONFIG=$KUBECONFIG    
+    DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
+    DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
     echo ${CI_COMMIT_SHORT_SHA}
     export DT_PAYLOAD="
@@ -258,10 +258,10 @@ dt_production_deployment_event:
       \"attachRules\": {
         \"tagRule\" : {
             \"meTypes\" : \"SERVICE\",
-            \"tags\" : [
+            \"tags\" : [ 
               {
                 \"context\": \"CONTEXTLESS\",
-                \"key\": \"hotday-tag-rule\",
+                \"key\": \"hotday-tag-rule\", 
                 \"value\": \"${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}\"
               }
             ]
@@ -282,3 +282,4 @@ dt_production_deployment_event:
     "
     echo $DT_PAYLOAD > payload.tmp
     curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
+      
