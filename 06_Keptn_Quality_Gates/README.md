@@ -13,10 +13,7 @@ The brief presentation given before this exercise explained how we utilize Keptn
 Keptn Quality Gates utilize an SLI provider to handle communications with a metric source based on the queries that are supplied in our SLI definition yaml. We will be utilizing Dynatrace as our SLI provider so we must first deploy the Dynatrace SLI Service:
 
 ```console
-cd /usr/keptn/scripts
-./enableDynatraceSLIforProject.sh gitlab
-kubectl apply -f ../manifests/dynatrace-sli-distributor.yaml
-kubectl apply -f ../manifests/dynatrace-sli-service.yaml    
+kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.0/deploy/service.yaml 
 ```
 
 ## Keptn onboarding for our Gitlab pipeline and carts service
@@ -47,15 +44,11 @@ We must provide SLI and SLO definitions for Keptn to evaluate. To recap, SLIs re
 The initial SLIs we will be using will be simple metrics corresponding to throughput, error rates and response times for the carts service in the hardening namespace of our cluster.
 
 ```yaml
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: dynatrace-sli-config-gitlab
-  namespace: keptn
-data:
-  custom-queries: |
+---
+  spec_version: '1.0'
+  indicators:
     throughput: "builtin:service.requestCount.total:merge(0):count?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
-    error_rate: "builtin:service.errors.total.count:merge(0):avg?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE"
+    error_rate: "builtin:service.errors.total.count:merge(0):avg?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     response_time_p50: "builtin:service.response.time:merge(0):percentile(50)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     response_time_p90: "builtin:service.response.time:merge(0):percentile(90)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     response_time_p95: "builtin:service.response.time:merge(0):percentile(95)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
@@ -65,27 +58,27 @@ Our SLOs provide the targets for our metrics. Here we're looking for a response 
 
 ```yaml
 ---
-  spec_version: '0.1.0'
-  comparison:
-    compare_with: "single_result"
-    include_result_with_score: "pass"
-    aggregate_function: avg
-  objectives:
-    - sli: response_time_p95
-      pass:        # pass if (relative change <= 20% AND absolute value is < 600)
-        - criteria:
-            - "<=+20%" # relative values require a prefixed sign (plus or minus)
-            - "<600"   # absolute values only require a logical operator
-      warning:     # if the response time is below 800ms, the result should be a warning
-        - criteria:
-            - "<=800"
-    - sli: throughput
-    - sli: error_rate
-    - sli: response_time_p50
-    - sli: response_time_p90
-  total_score:
-    pass: "90%"
-    warning: 75%
+spec_version: '0.1.1'
+comparison:
+  compare_with: "single_result"
+  include_result_with_score: "pass"
+  aggregate_function: avg
+objectives:
+  - sli: response_time_p95
+    pass:             # pass if (relative change <= 10% AND absolute value is < 600ms)
+      - criteria:
+          - "<=+20%"  # relative values require a prefixed sign (plus or minus)
+          - "<600"    # absolute values only require a logical operator
+    warning:          # if the response time is below 800ms, the result should be a warning
+      - criteria:
+          - "<=800"
+  - sli: throughput
+  - sli: error_rate
+  - sli: response_time_p50
+  - sli: response_time_p90          
+total_score:
+  pass: "90%"
+  warning: "75%"    
 ```
 
 To utilize these values, we must add them to Keptn and our cluster so that they can be evaluated:
@@ -103,7 +96,7 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
 
 1. Job to update our SLI definition
 
-    In Keptn 0.6beta2 our SLI definition is stored as a Config Map in Kubernetes. In this job, we are searching for a placeholder that will be replaced with the CI_COMMIT_SHA of our build. This allows us to use calculated service metrics later in this exercise. 
+    In Keptn 0.6 our SLI definition is stored as yaml in our repo. In this job, we are searching for a placeholder that will be replaced with the CI_COMMIT_SHA of our build. This allows us to use calculated service metrics later in this exercise. We then push this updated SLI Definition to Keptn.
 
     ```yaml
     keptn-SLI-update:
@@ -120,8 +113,7 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
         export KUBECONFIG=$KUBECONFIG
         sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
         cat sli-quality-gates-dynatrace-extended.yaml
-        kubectl apply -f sli-quality-gates-dynatrace-extended.yaml
-
+        keptn add-resource --project=gitlab --stage=hardening --service=carts --resource=sli-quality-gates-dynatrace-extended.yaml --resourceUri=dynatrace/sli.yaml
     ```
 
 1. Job to execute the Keptn Evaluation
@@ -172,18 +164,6 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
     when: delayed
     start_in: 60 seconds
     ```
-
-## Make the Changes to our pipeline 
-
-Adjust pipeline to include Keptn Quality Gates:
-```console
-cd /usr/keptn/hotday-carts
-cp .gitlab-ci-full.yml .gitlab-ci.yml
-git add .gitlab-ci.yml
-git commit -m "include quality gates"
-git push origin master
-```
-
 ## Dynatrace Calculated Service Metrics
 
 Dynatrace calculated service metrics will allow us to adjust our SLOs and SLIs to include queries specifically targetting the requests submitted by jmeter during the load test. This allows us to obtain more accurate results for our SLI queries and target specific calculated measures like DB calls per request, Calls to other services by our service, and the response time of just the requests in our load test.
@@ -191,15 +171,9 @@ Dynatrace calculated service metrics will allow us to adjust our SLOs and SLIs t
 These calculated service metrics can be easily incorporated into our SLI file (note the rt_invoke_avg, count_svccalls_invoke, and count_dbcalls_invoke):
 
 ```yaml
-# add using kubectl apply -f sample_dynatrace_sli.yaml
-
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: dynatrace-sli-config-gitlab
-  namespace: keptn
-data:
-  custom-queries: |
+---
+  spec_version: '1.0'
+  indicators:
     throughput: "builtin:service.requestCount.total:merge(0):count?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     error_rate: "builtin:service.errors.total.count:merge(0):avg?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     response_time_p50: "builtin:service.response.time:merge(0):percentile(50)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
@@ -207,7 +181,7 @@ data:
     response_time_p95: "builtin:service.response.time:merge(0):percentile(95)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     rt_invoke_avg: "calc:service.toptestresponsetime:filter(eq(LoadTestName,PerfCheck_REPLACEME)):merge(0):avg?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     count_svccalls_invoke: "calc:service.toptestservicecalls:filter(eq(LoadTestName,PerfCheck_REPLACEME)):merge(0):sum?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
-    count_dbcalls_invoke: "calc:service.toptestdbcalls:filter(eq(LoadTestName,PerfCheck_REPLACEME)):merge(0):sum?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)" 
+    count_dbcalls_invoke: "calc:service.toptestdbcalls:filter(eq(LoadTestName,PerfCheck_REPLACEME)):merge(0):sum?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"    
 ```    
 
 ## Create and implement Dynatrace calculated service metrics in our pipeline
@@ -222,6 +196,17 @@ data:
     ```console
     cd /usr/keptn/hotday-carts
     keptn add-resource --project=gitlab --service=carts --stage=hardening --resource=slo_quality-gates-extended.yaml --resourceUri=slo.yaml
+    ```
+
+1. Make the Changes to our pipeline 
+
+    Adjust pipeline to include Keptn Quality Gates:
+    ```console
+    cd /usr/keptn/hotday-carts
+    cp .gitlab-ci-full.yml .gitlab-ci.yml
+    git add .gitlab-ci.yml
+    git commit -m "include quality gates"
+    git push origin master
     ```
 
 1. Adjust the helm chart to deploy 

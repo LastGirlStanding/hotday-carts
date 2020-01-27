@@ -236,7 +236,7 @@ keptn-SLI-update:
     export KUBECONFIG=$KUBECONFIG
     sed -i 's/REPLACEME/'"${CI_COMMIT_SHA}"'/g' sli-quality-gates-dynatrace-extended.yaml
     cat sli-quality-gates-dynatrace-extended.yaml
-    kubectl apply -f sli-quality-gates-dynatrace-extended.yaml
+    keptn add-resource --project=gitlab --stage=hardening --service=carts --resource=sli-quality-gates-dynatrace-extended.yaml --resourceUri=dynatrace/sli.yaml
 
 keptn-evaluation:
   image: docker.io/mvilliger/keptn-k8s-runner:0.6.2

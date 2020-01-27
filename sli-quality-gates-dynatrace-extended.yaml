@@ -1,12 +1,6 @@
-# add using kubectl apply -f sample_dynatrace_sli.yaml
-
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: dynatrace-sli-config-gitlab
-  namespace: keptn
-data:
-  custom-queries: |
+---
+  spec_version: '1.0'
+  indicators:
     throughput: "builtin:service.requestCount.total:merge(0):count?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     error_rate: "builtin:service.errors.total.count:merge(0):avg?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
     response_time_p50: "builtin:service.response.time:merge(0):percentile(50)?scope=tag(hotday-tag-rule:$SERVICE-$SERVICE-$STAGE)"
