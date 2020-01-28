@@ -6,7 +6,7 @@ In our previous exercise, we added Dynatrace API calls to our pipeline notifying
 
 ## The x-dynatrace-test HTTP header
 
-Following the best practices for configuring load testing tool integrations with Dynatrace, we'll be configuring jmeter to build out the x-dynatrace-test HTTP header with a series of key:value pairs.
+Following the best practices for configuring load testing tool integrations with Dynatrace, we'll be configuring JMeter to build out the x-dynatrace-test HTTP header with a series of key:value pairs.
 
 ### x-dynatrace-test HTTP header keys
 
@@ -17,9 +17,9 @@ LSN | Load Script Name - name of the load testing script. This groups a set of t
 TSN | Test Step Name is a logical test step within your load testing script (for example, Login or Add to cart.)
 VU | Virtual User ID of the unique virtual user who sent the request.
 
-### Populating the x-dynatrace-test HTTP header with jmeter
+### Populating the x-dynatrace-test HTTP header with JMeter
 
-To add dynamic variables to populate the header a BeanShell PreProcessor is added to the jmeter script. While this has already been done for you in the script present in this repo, here is the contents of the BeanShell script:
+To add dynamic variables to populate the header a BeanShell PreProcessor is added to the JMeter script. While this has already been done for you in the script present in this repo, here is the contents of the BeanShell script:
 
 ```java
 import org.apache.jmeter.util.JMeterUtils;
@@ -54,23 +54,24 @@ hm.add(new org.apache.jmeter.protocol.http.control.Header("x-dynatrace-test", he
 
 ## Request Attributes for Load Testing
 
-After adding the x-dynatrace-test header to our jmeter script we'll need to configure Dynatrace to capture and extract the values of the header. We'll be configuring the request attribute capture using the Dynatrace UI. For our purposes today we will only be using the LTN value from the header as our load test is quite simple.
+After adding the x-dynatrace-test header to our JMeter script we'll need to configure Dynatrace to capture and extract the values of the header. We'll be configuring the request attribute capture using the Dynatrace UI. For our purposes today we will only be using the LTN value from the header as our load test is quite simple.
 
 The steps are as follows:
-1. Navigate to Server-Side Service Monitoring -> Request Attributes
-1. click "Define a new request attribute"
-1. Define our request attribute with the name LTN
-1. Data type should be string
-1. capture the First value
-1. leave the text as-is
-1. add new data source
-1. our data source will pull from all process groups, hosts, technologies and tags
-1. the Request attribute source will be "HTTP request header"
-1. capture on the server side of a web request
-1. parameter name is x-dynatrace-test
-1. Expand the "further restrict or process captured parameters"
-1. Proprocess the paramater by extracting substring between LTN= and ;
-1. select save.
+1. Open your Dynatrace tenant and go to **Settings**
+1. Navigate to **Server-side service monitoring -> Request attributes**
+1. Click **Define a new request attribute**
+1. Define our request attribute with the name: `LTN`
+1. Data type should be: `Text`
+1. Capture the: `First value`
+1. `Leave the text as-is`
+1. Click **Add new data source**
+1. Our data source will pull from all process groups, hosts, technologies and tags
+1. The Request attribute source will be: `HTTP request header`
+1. Capture on the server side of a web request
+1. Parameter name is: `x-dynatrace-test`
+1. Expand the *Further restrict or process captured parameters*
+1. Proprocess  paramater by extracting substring `between` LTN= and ;
+1. Select save.
 
 
 ## Pulling it all together
