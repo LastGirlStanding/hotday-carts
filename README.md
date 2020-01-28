@@ -20,7 +20,7 @@ In this workshop, we will utilize a bastion host to run Docker containers that w
     <img src="https://github.com/shellinabox/shellinabox/raw/master/misc/preview.gif?raw=true" width="50%"/>
     </details>
 
-* **Option B: Directly via SSH** - 
+* **Option B: Directly via SSH** 
 1. For those that have a local SSH client and firewall rules that allow outbound access, an outbound connection to the bastion host can be created like so:
     <details><summary>Local SSH client access</summary>
 
@@ -33,7 +33,7 @@ In this workshop, we will utilize a bastion host to run Docker containers that w
 1. To start and access the Docker container you will use for this workshop, please execute, replacing {yourusername} with the username from your card:
 
     ```console
-    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.6 && docker exec -it {yourusername} /bin/bash
+    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.6.0 && docker exec -it {yourusername} /bin/bash
     ```
 
 1. If for some reason you lose access to the container, execute the following to access the container again:
