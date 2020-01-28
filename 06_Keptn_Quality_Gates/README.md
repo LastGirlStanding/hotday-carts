@@ -2,7 +2,7 @@
 
 In our previous exercise, we added a job to query Dynatrace for open problems. In this exercise, we will be adding [Keptn Quality Gates](https://keptn.sh/docs/0.6.0/usecases/deployments-with-quality-gates/) to our pipeline. 
 
-# Exercise 6: Keptn Quality Gates recap and implementation within pipeline
+# Exercise 6: Keptn Quality Gates recap and implementation within the pipeline
 
 The brief presentation given before this exercise explained how we utilize Keptn Quality Gates to implement SRE principles within our pipelines. 
 
@@ -31,7 +31,7 @@ stages:
 
 ## Deploy the Dynatrace SLI service
 
-Keptn Quality Gates utilize an SLI provider to handle communications with a metric source based on the queries that are supplied in our SLI definition yaml. 
+Keptn Quality Gates utilizes an SLI provider to handle communications with a metric source based on the queries that are supplied in our SLI definition yaml. 
 
 1. Deploy the Dynatrace SLI Service
 
@@ -130,7 +130,7 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
 
 1. Job to execute the Keptn Evaluation
 
-    This job utilizes the Keptn cli to execute a "start-evaluation" command. As this command is asynchronous, we must capture the keptnContext that is returned via the CLI and utilize this keptnContext to continually query the Keptn API until the evaluation is complete. We then use jq to capture the evaluation results and pass the job if the Keptn evaluation was successful or fail the job if the if the Keptn evaluation failed. While Keptn has a built-in capability to wait 60 seconds for results processing by Dynatrace this job includes an additional 60-second wait. 
+    This job utilizes the Keptn cli to execute a "start-evaluation" command. As this command is asynchronous, we must capture the keptnContext that is returned via the CLI and utilize this keptnContext to continually query the Keptn API until the evaluation is complete. We then use jq to capture the evaluation results and pass the job if the Keptn evaluation was successful or fail the job if the Keptn evaluation failed. While Keptn has a built-in capability to wait 60 seconds for results processing by Dynatrace this job includes an additional 60-second wait. 
 
     ```yaml
     keptn-evaluation:
@@ -176,9 +176,10 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
     when: delayed
     start_in: 60 seconds
     ```
+
 ## Dynatrace Calculated Service Metrics
 
-Dynatrace calculated service metrics will allow us to adjust our SLOs and SLIs to include queries specifically targetting the requests submitted by jmeter during the load test. This allows us to obtain more accurate results for our SLI queries and target specific calculated measures like DB calls per request, Calls to other services by our service, and the response time of just the requests in our load test.
+Dynatrace calculated service metrics will allow us to adjust our SLOs and SLIs to include queries specifically targetting the requests submitted by JMeter during the load test. This allows us to obtain more accurate results for our SLI queries and target specific calculated measures like DB calls per request, Calls to other services by our service, and the response time of just the requests in our load test.
 
 These calculated service metrics can be easily incorporated into our SLI file (note the rt_invoke_avg, count_svccalls_invoke, and count_dbcalls_invoke):
 
@@ -247,4 +248,4 @@ These calculated service metrics can be easily incorporated into our SLI file (n
     domain: REPLACEME
     ```
 
-1. This build should fail Keptn evaluation and NOT be deployed to Production
+1. This build should fail Keptn evaluation and **NOT** be deployed to Production

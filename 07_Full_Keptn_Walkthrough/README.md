@@ -2,9 +2,9 @@
 
 In our previous exercises, we were configuring GitLab to handle our pipeline. Now we will be replacing GitLab pipelines with a deployment fully managed by Keptn. Rather than utilize complex scripting within our pipeline Keptn will manage all that for us.
 
-# Exercise 7: Keptn Quality Gates recap and implementation within pipeline
+# Exercise 7: Keptn Quality Gates recap and implementation within the pipeline
 
-## Create project
+## Create a project
 
 ```yaml
 stages:
@@ -101,7 +101,7 @@ keptn add-resource --project=sockshop --stage=staging --service=carts --resource
 keptn send event new-artifact --project=sockshop --service=carts --image=docker.io/keptnexamples/carts --tag=0.10.2
 ```
 
-As before, we can watch the deployment via the Bridge. Our quality gate should detect that this version of carts has a performance degredation and not deploy to production.
+As before, we can watch the deployment via the Bridge. Our quality gate should detect that this version of carts has a performance degradation and not deploy to production.
 
 <img src="../images/quality_gates.png" width="50%">
 
