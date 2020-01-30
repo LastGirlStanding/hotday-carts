@@ -30,16 +30,16 @@ In this workshop, we will utilize a bastion host to run Docker containers that w
     
     </details>
 
-1. To start and access the Docker container you will use for this workshop, please execute, replacing {yourusername} with the username from your card:
+1. To start and access the Docker container you will use for this workshop, please execute the following command (which will automatically create a container named after your username with all necessary scripts and the kubeconfig automatically mounted into the container):
 
     ```console
-    docker run -d --name {yourusername} -it mvilliger/2020-hotday-keptn-qualitygates:0.6.0 && docker exec -it {yourusername} /bin/bash
+    docker run -d --name ${USER} -it --mount type=bind,source=/home/${USER}/.kube/,target=/root/.kube/ mvilliger/2020-hotday-keptn-qualitygates:0.6.0 && docker exec -it ${USER} /bin/bash
     ```
 
 1. If for some reason you lose access to the container, execute the following to access the container again:
 
     ```console    
-    docker exec -it {yourusername} /bin/bash
+    docker exec -it ${USER} /bin/bash
     ```
 
 # Exercise 1: Environment Setup
@@ -75,7 +75,7 @@ In this workshop, we will utilize a bastion host to run Docker containers that w
 
 ## 2) Install Keptn
 
-Once you are logged onto the bastion host and shelled in to the container, we are ready to install Keptn.
+Once you are logged onto the bastion host and shelled into the container, we are ready to install Keptn.
 
 Install the Keptn control plane components into your cluster, using the **Keptn CLI**:
 
