@@ -144,8 +144,24 @@ This will install the Dynatrace OneAgent Operator into your cluster.
     ```console
     ./deployDynatraceOnGKE.sh
     ```
+    **Note:** The install will take about **2 minutes** to perform.
 
-**Note:** The install will take about **2 minutes** to perform.
+1. Add hotday-tag-rule
+
+    While keptn tags are automatically created via configuration api requests, we'll manually create a tag rule for our Gitlab deployed services:
+
+    The steps are as follows:
+    1. Open your Dynatrace tenant and go to **Settings**
+    1. Navigate to **Tags -> Automatically applied tags**
+    1. Click **Create tag**
+    1. Define our tag with the name: `hotday-tag-rule`
+    1. Click **Add a new rule**
+    1. Optional tag value: `{ProcessGroup:KubernetesContainerName}-{ProcessGroup:KubernetesNamespace}`
+    1. Rule applies to: `Process Groups`
+    1. Conditions: `Kubernetes Namespace` : `exists`
+    1. Select `Apply to all services provided by the process groups`
+    1. Click **Create rule**
+    1. Click **Save changes**
 
 ## 4) Expose Keptn's Bridge
 

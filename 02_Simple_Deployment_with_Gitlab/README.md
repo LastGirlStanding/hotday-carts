@@ -128,4 +128,10 @@ Once this is complete, the pipeline should immediately begin executing:
 
   <img src="../images/pipeline-running.png" width="50%">
 
-  
+Once the pipeline completes, we can easily show our carts urls by executing the following:
+
+```console
+/usr/keptn/hotday-carts/showcartsurls.sh
+```
+
+Please click the links shown in the output to see the carts application across all three namespaces!

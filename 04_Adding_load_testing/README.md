@@ -71,7 +71,7 @@ The steps are as follows:
 1. Parameter name is: `x-dynatrace-test`
 1. Expand the *Further restrict or process captured parameters*
 1. Proprocess  paramater by extracting substring `between` LTN= and ;
-1. Select save.
+1. Select **Save**.
 
 
 ## Pulling it all together
