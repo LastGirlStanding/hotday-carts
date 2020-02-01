@@ -217,8 +217,9 @@ In this workshop, we'll be utilizing GitLab for both our source-code repository 
     1. Configure git credentials for CLI:
         ```console
         git config --global credential.helper store
-        mkdir ~/.git
-        vim ~/.git/.git-credentials
+        git config --global user.email "youremail@email.com"
+        git config --global user.name "yourusername"
+        vim ~/.git-credentials
         ```
         make the contents of the git credentials file contain the following, replacing username/personalaccesstoken with your own values
         https://username:token@gitlab.com
