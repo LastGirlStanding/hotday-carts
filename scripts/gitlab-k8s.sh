@@ -20,8 +20,8 @@ curl --header "Private-Token: ${GL_API_TOKEN}" https://gitlab.com/api/v4/project
 -X POST --data @gitlab.json
 
 # posts variable to project containing base64 encoded kubeconf for use elsewhere
-kube_config_base64=$(cat ~/.kube/config | base64)
-postdatavariable='{"key": "kube_config2","value": "'${kube_config_base64}'","protected": false,"variable_type": "file","masked": true,"environment_scope": "*"}'
+kube_config_base64=$(cat ~/.kube/config | base64 -w 0)
+postdatavariable='{"key": "kube_config","value": "'${kube_config_base64}'","protected": false,"variable_type": "file","masked": true,"environment_scope": "*"}'
 echo ${postdatavariable} > kubeconfvariable.json
 curl --header "Private-Token: ${GL_API_TOKEN}" https://gitlab.com/api/v4/projects/${CI_PROJECT_ID}/variables \
 -H "Accept: application/json" \
