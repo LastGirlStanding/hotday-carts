@@ -26,8 +26,7 @@ deploy-cartsdb-in-test:
   variables:
     GIT_STRATEGY: fetch
   script:
-    - cat $kube_config
-    - echo "${kube_config}" | base64 -d > ${kubeconf_file}
+    - echo "${kube_config}" | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
     - echo ${kube_config} | base64 -d > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
