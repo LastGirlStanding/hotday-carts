@@ -28,6 +28,4 @@ deploy-cartsdb-in-test:
   script:
     - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -di > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - kubectl cluster-info
