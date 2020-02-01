@@ -24,17 +24,15 @@ stages:
 # Deploy Stage
 #################################################################
 deploy-cartsdb-in-test:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-test
   environment:
     name: carts-test
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
@@ -44,17 +42,15 @@ deploy-cartsdb-in-test:
       ./charts/carts-db/ 
 
 deploy-carts-in-test:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-test
   environment:
     name: carts-test
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
@@ -66,16 +62,14 @@ deploy-carts-in-test:
 
 dt_test_deployment_event:
   stage: deploy-test
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   environment:
     name: carts-test
   variables:
       GIT_STRATEGY: none
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
@@ -112,17 +106,15 @@ dt_test_deployment_event:
     curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
       
 deploy-cartsdb-in-hardening:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-hardening
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
@@ -132,17 +124,15 @@ deploy-cartsdb-in-hardening:
       ./charts/carts-db/
 
 deploy-carts-in-staging:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-hardening
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
@@ -154,16 +144,14 @@ deploy-carts-in-staging:
 
 dt_stage_deployment_event:
     stage: deploy-hardening
-    image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+    image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
     environment:
       name: carts-hardening    
     variables:
         GIT_STRATEGY: none
     script: |
-      echo ${kube_config} | base64 -d > ${kubeconf_file}
+      cat $kube_config | base64 -di > ${kubeconf_file}
       export KUBECONFIG=${kubeconf_file}
-      echo ${kube_config} | base64 -d > ${KUBECONFIG}
-      export KUBECONFIG=$KUBECONFIG    
       DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
       DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
       echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
@@ -201,17 +189,15 @@ dt_stage_deployment_event:
   
             
 generate-load-in-hardening:
-  image: docker.io/mvilliger/jmeter-k8s-runner:latest
+  image: docker.io/mvilliger/jmeter-k8s-runner:0.6.3
   stage: load-hardening
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
     - jmeter -n -t ./jmeter/load.jmx
       -l ${CI_ENVIRONMENT_SLUG}_perf.tlf
@@ -223,17 +209,15 @@ generate-load-in-hardening:
       -JDT_LTN="PerfCheck_${CI_COMMIT_SHA}"
 
 keptn-SLI-update:
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: keptn-sli-update
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
     KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
     KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
     keptn auth -a $KEPTN_API_TOKEN -e $KEPTN_ENDPOINT    
@@ -242,17 +226,15 @@ keptn-SLI-update:
     keptn add-resource --project=gitlab --stage=hardening --service=carts --resource=sli-quality-gates-dynatrace-extended.yaml --resourceUri=dynatrace/sli.yaml
 
 keptn-evaluation:
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: keptn-eval-hardening
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
     export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
     KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
     KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
@@ -286,14 +268,12 @@ keptn-evaluation:
 
 dt_get_problems:
   stage: dynatrace-get-problems
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   variables:
       GIT_STRATEGY: none
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG    
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     problems=$(curl -X GET "https://${DT_TENANT_URL}/api/v1/problem/feed?tag=hotday-tag-rule:${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}" -H "Authorization: Api-Token ${DT_API_TOKEN}" | jq ".result.problems[0]")
@@ -313,17 +293,15 @@ dt_get_problems:
   start_in: 2 minutes  
 
 deploy-cartsdb-in-production:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-production
   environment:
     name: carts-production
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
@@ -333,17 +311,15 @@ deploy-cartsdb-in-production:
       ./charts/carts-db/
 
 deploy-carts-in-production:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-production
   environment:
     name: carts-production
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts/values.yaml
     - helm upgrade
       carts-${CI_ENVIRONMENT_SLUG}
@@ -355,16 +331,14 @@ deploy-carts-in-production:
 
 dt_production_deployment_event:
   stage: deploy-production
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   environment:
     name: carts-production    
   variables:
       GIT_STRATEGY: none
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG    
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
