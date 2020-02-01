@@ -92,16 +92,14 @@ For this job, we're using a simple Docker container created for use by our pipel
 ```yaml
 dt_test_deployment_event:
   stage: deploy-test
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   environment:
     name: carts-test
   variables:
       GIT_STRATEGY: none
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     echo ${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}
@@ -136,7 +134,6 @@ dt_test_deployment_event:
     "
     echo $DT_PAYLOAD > payload.tmp
     curl -L -H "Authorization: Api-Token ${DT_API_TOKEN}" -H "Content-Type: application/json" "https://${DT_TENANT_URL}/api/v1/events" -d @payload.tmp
-      
 ```
 
 # Deploy the pipeline including deployment events

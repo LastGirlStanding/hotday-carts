@@ -109,17 +109,15 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
 
     ```yaml
     keptn-SLI-update:
-    image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+    image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
     stage: keptn-sli-update
     environment:
         name: carts-hardening
     variables:
         GIT_STRATEGY: fetch
     script: |
-        echo ${kube_config} | base64 -d > ${kubeconf_file}
+        cat $kube_config | base64 -di > ${kubeconf_file}
         export KUBECONFIG=${kubeconf_file}
-        echo ${kube_config} | base64 -d > ${KUBECONFIG}
-        export KUBECONFIG=$KUBECONFIG
         KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
         KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
         keptn auth -a $KEPTN_API_TOKEN -e $KEPTN_ENDPOINT    
@@ -130,21 +128,19 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
 
 1. Job to execute the Keptn Evaluation
 
-    This job utilizes the Keptn cli to execute a "start-evaluation" command. As this command is asynchronous, we must capture the keptnContext that is returned via the CLI and utilize this keptnContext to continually query the Keptn API until the evaluation is complete. We then use jq to capture the evaluation results and pass the job if the Keptn evaluation was successful or fail the job if the Keptn evaluation failed. While Keptn has a built-in capability to wait 60 seconds for results processing by Dynatrace this job includes an additional 60-second wait. 
+    This job utilizes the Keptn cli to execute a "start-evaluation" command. As this command is asynchronous, we must capture the keptnContext that is returned via the CLI and utilize this keptnContext to continually query the Keptn API until the evaluation is complete. We then use jq to capture the evaluation results and pass the job if the Keptn evaluation was successful or fail the job if the Keptn evaluation failed. While Keptn has a built-in capability to wait 60 seconds for results processing by Dynatrace this job includes an additional 15-second wait. 
 
     ```yaml
     keptn-evaluation:
-    image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+    image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
     stage: keptn-eval-hardening
     environment:
         name: carts-hardening
     variables:
         GIT_STRATEGY: fetch
     script: |
-        echo ${kube_config} | base64 -d > ${kubeconf_file}
+        cat $kube_config | base64 -di > ${kubeconf_file}
         export KUBECONFIG=${kubeconf_file}
-        echo ${kube_config} | base64 -d > ${KUBECONFIG}
-        export KUBECONFIG=$KUBECONFIG
         export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
         KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
         KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 -d)
@@ -174,7 +170,7 @@ To include Keptn Quality Gates in our pipeline we have to add two jobs.
                 echo "Keptn Quality Gate - Evaluation Succeeded"
         fi
     when: delayed
-    start_in: 60 seconds
+    start_in: 15 seconds
     ```
 
 ## Dynatrace Calculated Service Metrics

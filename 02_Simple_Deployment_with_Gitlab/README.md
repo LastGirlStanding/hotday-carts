@@ -49,11 +49,11 @@ stages:
 Pipeline jobs represent the meat of our pipeline, where the actual work is occurring. Each job has several important elements
 
 #### Job name, Docker image, and Environment
-Here we are defining the "deploy-cartsdb-in-test" job which is executed within the devth/helm image tagged v2.12.3 on DockerHub. This job will execute as part of the deploy-test stage and within the carts-test environment. The value of "environment" automatically populates the "CI_ENVIRONMENT_SLUG" environment variable. 
+Here we are defining the "deploy-cartsdb-in-test" job which is executed within the mvilliger/keptn-k8s-runner image created for this pipeline tagged 0.6.3 on DockerHub. This job will execute as part of the deploy-test stage and within the carts-test environment. The value of "environment" automatically populates the "CI_ENVIRONMENT_SLUG" environment variable. 
 
 ```yaml  
 deploy-cartsdb-in-test:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-test
   environment:
     name: carts-test
@@ -75,10 +75,8 @@ Here we define the script that will be executed within the Docker container. Thi
 
 ```yaml  
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}
@@ -95,17 +93,15 @@ Here we define the script that will be executed within the Docker container. Thi
 # Deploy Stage
 #################################################################
 deploy-cartsdb-in-test:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: deploy-test
   environment:
     name: carts-test
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - sed -i "s/REPLACEME/$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})/g" charts/carts-db/values.yaml
     - helm upgrade
       carts-db-${CI_ENVIRONMENT_SLUG}

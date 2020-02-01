@@ -115,14 +115,12 @@ This job again makes use of the Dynatrace credentials stored in a config map to 
 ```yaml
 dt_get_problems:
   stage: dynatrace-get-problems
-  image: docker.io/mvilliger/keptn-k8s-runner:0.6.2
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   variables:
       GIT_STRATEGY: none
   script: |
-    echo ${kube_config} | base64 -d > ${kubeconf_file}
+    cat $kube_config | base64 -di > ${kubeconf_file}
     export KUBECONFIG=${kubeconf_file}
-    echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    export KUBECONFIG=$KUBECONFIG    
     DT_TENANT_URL=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_TENANT} | base64 -d)
     DT_API_TOKEN=$(kubectl -n keptn get secret dynatrace -ojsonpath={.data.DT_API_TOKEN} | base64 -d)
     problems=$(curl -X GET "https://${DT_TENANT_URL}/api/v1/problem/feed?tag=hotday-tag-rule:${APPLICATION_SHORT_NAME}-${CI_ENVIRONMENT_NAME}" -H "Authorization: Api-Token ${DT_API_TOKEN}" | jq ".result.problems[0]")
@@ -134,11 +132,12 @@ dt_get_problems:
       echo "Problem ID:"
       echo $problems|jq .id
       echo $problems|jq .rankedImpacts[0]
-      echo "A problem has been detected by Dynatrace, the problem can be viewed here: https://${DT_TENANT_URL}/#problems/problemdetails;pid=${problemid}"
+      echo "https://${DT_TENANT_URL}/#problems/problemdetails;pid=${problemid}"
+      python /sendslack.py "A problem has been detected by Dynatrace. Please check https://${DT_TENANT_URL}/#problems/problemdetails;pid=${problemid}"
       exit 1
     fi
   when: delayed
-  start_in: 10 minutes  
+  start_in: 2 minutes  
 ```
 
 # Making the changes to our pipeline

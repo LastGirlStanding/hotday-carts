@@ -80,17 +80,15 @@ For this job, we're utilizing a lightweight Docker image built with just the nec
 
 ```yaml
 generate-load-in-hardening:
-  image: docker.io/mvilliger/jmeter-k8s-runner:latest
+  image: docker.io/mvilliger/jmeter-k8s-runner:0.6.3
   stage: load-hardening
   environment:
     name: carts-hardening
   variables:
     GIT_STRATEGY: fetch
   script:
-    - echo ${kube_config} | base64 -d > ${kubeconf_file}
+    - cat $kube_config | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
-    - export KUBECONFIG=$KUBECONFIG
     - export DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
     - jmeter -n -t ./jmeter/load.jmx
       -l ${CI_ENVIRONMENT_SLUG}_perf.tlf
