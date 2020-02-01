@@ -19,7 +19,7 @@ stages:
 # Deploy Stage
 #################################################################
 deploy-cartsdb-in-test:
-  image: docker.io/devth/helm:v2.12.3
+  image: docker.io/mvilliger/keptn-k8s-runner:0.6.3
   stage: test
   environment:
     name: carts-test
@@ -28,6 +28,6 @@ deploy-cartsdb-in-test:
   script:
     - echo "${kube_config}" | base64 -di > ${kubeconf_file}
     - export KUBECONFIG=${kubeconf_file}
-    - echo ${kube_config} | base64 -d > ${KUBECONFIG}
+    - echo ${kube_config} | base64 -di > ${KUBECONFIG}
     - export KUBECONFIG=$KUBECONFIG
     - kubectl cluster-info
