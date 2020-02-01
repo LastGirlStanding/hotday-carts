@@ -221,7 +221,7 @@ In this workshop, we'll be utilizing GitLab for both our source-code repository 
         vim ~/.git/.git-credentials
         ```
         make the contents of the git credentials file contain the following, replacing username/personalaccesstoken with your own values
-        https://<USERNAME>:<PERSONALACCESSTOKEN>@gitlab.com
+        https://username:token@gitlab.com
 
     1. Clone your forked repo:
         1. In WebUI project view, copy the HTTPS Clone address
